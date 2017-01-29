@@ -44,7 +44,7 @@ public class AIShip  extends Ship implements Renderable{
         anglePID.setOutputLimits(-1, 1);
 	}
 	
-	public void initFunctions(){
+	public void initFunctions(){	// Initializes ship thruster functions
 		updateBlocks();
 		initialized = true;
 		
