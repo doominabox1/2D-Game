@@ -253,7 +253,7 @@ public class AIShip  extends Ship implements Renderable{
 			
 			g.drawLine(100, 200, (float) (100 + angularVelocity * 100), 200);
 			
-			g.drawOval(100, 100, 10, 10);
+			g.drawOval(100, 100, 10, 10); 
 		}
 	}
 }
