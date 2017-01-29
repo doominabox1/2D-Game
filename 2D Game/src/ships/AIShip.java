@@ -22,7 +22,7 @@ import util.MiniPID;
 public class AIShip  extends Ship implements Renderable{
 	private boolean initialized = false;
 	
-	private ThrusterCluster forwardThrusters;
+	private ThrusterCluster forwardThrusters;	// Thrusters to move the ship forward
 	private ThrusterCluster backwardThrusters;
 	private ThrusterCluster clockwiseThrusters;
 	private ThrusterCluster counterClockwiseThrusters;
