@@ -32,7 +32,6 @@ public class AIShip  extends Ship implements Renderable{
 	private double targetAngle;
 	MiniPID anglePID;
 	
-	
 	public AIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
 		
@@ -44,7 +43,7 @@ public class AIShip  extends Ship implements Renderable{
         anglePID.setOutputLimits(-1, 1);
 	}
 	
-	public void initFunctions(){	// Initializes ship thruster functions
+	public void initFunctions(){	// Initializes ship thruster functions by testing all possible combinations of thrusters up to 3
 		updateBlocks();
 		initialized = true;
 		
@@ -107,7 +106,7 @@ public class AIShip  extends Ship implements Renderable{
 			}
 		}
 		
-		System.out.println(forwardThrusters);
+		System.out.println(forwardThrusters); // Print for debug
 		System.out.println(backwardThrusters);
 		System.out.println(clockwiseThrusters);
 		System.out.println(counterClockwiseThrusters);
