@@ -32,6 +32,7 @@ public class AIShip  extends Ship implements Renderable{
 	private double targetAngle;
 	MiniPID anglePID;
 	
+	
 	public AIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
 		
@@ -251,6 +252,8 @@ public class AIShip  extends Ship implements Renderable{
 			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
 			
 			g.drawLine(100, 200, (float) (100 + angularVelocity * 100), 200);
+			
+			g.drawOval(100, 100, 10, 10);
 		}
 	}
 }
