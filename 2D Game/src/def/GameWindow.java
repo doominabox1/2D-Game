@@ -10,7 +10,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import ships.AIShip;
@@ -101,7 +100,6 @@ public class GameWindow extends BasicGame  implements InputListener{
 		//renderList.add(ship);
 		renderList.add(aiShip);
 	}
-	Rectangle clipping = new Rectangle(0, 0, 100, 10);;
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
@@ -110,20 +108,16 @@ public class GameWindow extends BasicGame  implements InputListener{
 		//ship.update(delta, input);
 		aiShip.update(delta, input);
 		
-		clipping = new Rectangle(input.getMouseX(), input.getMouseY(), 100, 10);
-		
-//		if(ship.getClippingHull().intersects(clipping)){
-//			System.out.println("Intersection " + System.nanoTime());
-//		}
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
+		g.scale(0.5f, 0.5f);
+		g.translate(gc.getWidth() / 2, gc.getHeight() / 2);
 		for( Renderable r : renderList){
 			r.render(gc, g);
 		}
-		g.draw(clipping);
-		g.drawOval(gc.getWidth() / 2, gc.getHeight() / 2, 2, 2);
+		
 	}
 	
 	@Override

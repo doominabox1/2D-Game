@@ -13,4 +13,7 @@ public class Utility {
 		double yOutput = (size * (yIndex - (array[0].length / 2)))  + (array[0].length % 2 == 0 ? (size / 2f) : 0);
 		return new Vector2f((float)xOutput, (float)yOutput);
 	}
+	public static double distance(double x1, double y1, double x2, double y2){
+		return Math.hypot(x1-x2, y1-y2);
+	}
 }

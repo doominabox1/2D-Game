@@ -32,7 +32,6 @@ public class AIShip  extends Ship implements Renderable{
 	private double targetAngle;
 	MiniPID anglePID;
 	
-	
 	public AIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
 		
@@ -42,6 +41,7 @@ public class AIShip  extends Ship implements Renderable{
 		
 		anglePID = new MiniPID(1, 0.001, 30); 
         anglePID.setOutputLimits(-1, 1);
+        
 	}
 	
 	public void initFunctions(){	// Initializes ship thruster functions by testing all possible combinations of thrusters up to 3
@@ -168,6 +168,11 @@ public class AIShip  extends Ship implements Renderable{
 	
 	@Override
 	public void update(int delta, Input input){
+		
+		if(input.isKeyDown(Input.KEY_SPACE)){
+			position.set(500, 500);
+			velocity.set(0,0);
+		}
 
 		Vector2f temp = new Vector2f(velocity);	// Update position using velocity and delta
 		temp.scale(delta);
@@ -187,10 +192,21 @@ public class AIShip  extends Ship implements Renderable{
 			angularVelocity = -10;
 		}
 		
+		// TODO Update target angle to make velocity vector point at target
+		targetPosition.set(input.getMouseX(), input.getMouseY());
+		targetPosition.sub(position);
+		
+		targetAngle = targetPosition.getTheta();
+		
+		if(Math.abs(Utility.getAngleDiffernce(angle, targetAngle)) < 30){	// If the target angle is less than 90* away, switch to advanced targeting
+			if(Math.abs(Math.abs(Utility.getAngleDiffernce(velocity.getTheta(), targetAngle))) > 30){ // TODO fix this mess
+				accelerateForward(1);
+			}
+			targetAngle = targetAngle + Utility.getAngleDiffernce(velocity.getTheta(), targetAngle);
+		}
+		
+		
 		pts.clear();
-		
-		// TODO Update target angle to make velocity vector point at target 
-		
 		double angleDifference = Utility.getAngleDiffernce(angle, targetAngle);		// Use PID to set the ships rotation
         double anglePIDOutput = anglePID.getOutput(angle, angle + angleDifference);
         if(anglePIDOutput > 0){
@@ -198,8 +214,12 @@ public class AIShip  extends Ship implements Renderable{
         }else{
             accelerateCounterClockwise(Math.abs(anglePIDOutput));
         }
-		
-        // TODO Update 
+        
+        
+        if(anglePIDOutput < 0.0025){
+    		accelerateForward(1);
+        }
+        // TODO Thrust when pointing the right direction
 		
 		if(changed){		// Update center of mass and ship physics
 			updateBlocks();
@@ -251,10 +271,13 @@ public class AIShip  extends Ship implements Renderable{
 			dbg.scale(50);
 			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
 			
-			g.drawLine(100, 200, (float) (100 + angularVelocity * 100), 200);
+			g.setColor(Color.green);
+			dbg = new Vector2f(velocity);
+			dbg.normalise();
+			dbg.scale(50);
+			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
 			
-			g.drawOval(100, 100, 10, 10);
-			g.drawOval(200, 100, 10, 10); 
+			g.drawLine(100, 200, (float) (100 + angularVelocity * 100), 200);
 		}
 	}
 }
