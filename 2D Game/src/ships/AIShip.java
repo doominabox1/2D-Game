@@ -35,7 +35,7 @@ public class AIShip  extends Ship implements Renderable{
 		super(xSize, ySize, spriteSheetPath, spriteSize);
 		
 		targetPosition = new Vector2f(0, 0);
-		targetRange = 100;
+		targetRange = 200;
 		targetAngle = angle;
 		anglePID = new MiniPID(1, 0.1, 30); 
         anglePID.setOutputLimits(-1, 1);
@@ -176,7 +176,7 @@ public class AIShip  extends Ship implements Renderable{
 		temp.scale(delta);
 		position.add(temp);
 		
-		if(velocity.length() > 0.2){
+		if(velocity.length() > 0.2){	// Clamp max speed to 0.2
 			velocity.normalise();
 			velocity.scale(0.2f);
 		}
@@ -189,44 +189,58 @@ public class AIShip  extends Ship implements Renderable{
 			angle += 360;
 		}
 		
-		if(angularVelocity > 10){			// Clamp rotation speed
-			angularVelocity = 10;
-		}else if(angularVelocity < -10){
-			angularVelocity = -10;
-		}
+//		if(angularVelocity > 10){			// Clamp rotation speed
+//			angularVelocity = 10;
+//		}else if(angularVelocity < -10){
+//			angularVelocity = -10;
+//		}
 		
-		// TODO Update target angle to make velocity vector point at target
+		
 		targetPosition.set(input.getMouseX(), input.getMouseY());
+		
+		// Ship AI
+		float distanceToTarget = targetPosition.distance(position); 
 		targetPosition.sub(position);
 		
-		targetAngle = targetPosition.getTheta();
-		Vector2f curVel = new Vector2f(velocity);
-		curVel.normalise();
-		curVel.scale(velocity.length());
-		
-		Vector2f tarVel = new Vector2f(targetPosition);
-		tarVel.normalise();
-		tarVel.scale(velocity.length() * 2);
-		
-		targetAngle = Math.toDegrees(Math.atan2(tarVel.y - curVel.y, tarVel.x - curVel.x)); 
+		if(distanceToTarget > targetRange){	// If the target is close to being within range, slow down
+			targetAngle = targetPosition.getTheta();
+			Vector2f curVel = new Vector2f(velocity);
+			curVel.normalise();
+			curVel.scale(velocity.length());
+			
+			Vector2f tarVel = new Vector2f(targetPosition);
+			tarVel.normalise();
+			tarVel.scale(velocity.length() * 2);
+			
+			targetAngle = Math.toDegrees(Math.atan2(tarVel.y - curVel.y, tarVel.x - curVel.x)); 
+		}else{
+			targetAngle = velocity.getTheta();
+		}
 		
 		pts.clear();
-		//angle = targetAngle;
-		double angleDifference = Utility.getAngleDiffernce(angle, targetAngle);		// Use PID to set the ships rotation
+		double angleDifference = Utility.getAngleDiffernce(angle, targetAngle);	// Use PID to set the ships rotation
         double anglePIDOutput = anglePID.getOutput(angle, angle + angleDifference);
         if(anglePIDOutput > 0){
             accelerateClockwise(Math.abs(anglePIDOutput));
         }else{
             accelerateCounterClockwise(Math.abs(anglePIDOutput));
         }
-//        
-//        
-        if(angleDifference < Math.abs(10)){
-    		accelerateForward(1);
+
+        if(distanceToTarget > targetRange){
+	        if(angleDifference < Math.abs(10)){
+	    		accelerateForward(1);
+	        }
+        }else{
+        	if(angleDifference < Math.abs(10)){
+        		if(velocity.length() > 0.005){
+        			accelerateBackward(1);
+        		}
+	        }
         }
-        // TODO Thrust when pointing the right direction
-		
-		if(changed){		// Update center of mass and ship physics
+		// End ship AI
+        
+        
+		if(changed){	// Update center of mass and ship physics
 			updateBlocks();
 			hull.update();
 			changed = false;
@@ -283,6 +297,10 @@ public class AIShip  extends Ship implements Renderable{
 			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
 			
 			g.drawLine(100, 200, (float) (100 + angularVelocity * 100), 200);
+			
+			Vector2f t = new Vector2f(targetPosition);
+			t.add(position);
+			g.drawOval((float) (t.x - targetRange), (float) (t.y - targetRange), (float)targetRange * 2, (float)targetRange * 2);
 		}
 	}
 }
