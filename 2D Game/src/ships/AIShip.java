@@ -37,7 +37,7 @@ public class AIShip  extends Ship implements Renderable{
 		targetPosition = new Vector2f(0, 0);
 		targetRange = 100;
 		targetAngle = angle;
-		anglePID = new MiniPID(1, 0.001, 45); 
+		anglePID = new MiniPID(1, 0.1, 30); 
         anglePID.setOutputLimits(-1, 1);
         
 	}
@@ -176,6 +176,11 @@ public class AIShip  extends Ship implements Renderable{
 		temp.scale(delta);
 		position.add(temp);
 		
+		if(velocity.length() > 0.2){
+			velocity.normalise();
+			velocity.scale(0.2f);
+		}
+		
 		angle += angularVelocity * delta;	// Update rotation
 		
 		if(angle > 360){					// Keep rotation between 0 and 360 
@@ -216,7 +221,7 @@ public class AIShip  extends Ship implements Renderable{
         }
 //        
 //        
-        if(angleDifference < Math.abs(3)){
+        if(angleDifference < Math.abs(10)){
     		accelerateForward(1);
         }
         // TODO Thrust when pointing the right direction
