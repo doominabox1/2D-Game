@@ -231,9 +231,9 @@ public class AIShip  extends Ship implements Renderable{
 	    		accelerateForward(1);
 	        }
         }else{
-        	if(angleDifference < Math.abs(10)){
+        	if(angleDifference < Math.abs(25)){
         		if(velocity.length() > 0.005){
-        			accelerateBackward(1);
+        			accelerateBackward(1.25);
         		}
 	        }
         }
