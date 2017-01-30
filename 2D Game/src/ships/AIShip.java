@@ -26,7 +26,6 @@ public class AIShip  extends Ship implements Renderable{
 	private ThrusterCluster backwardThrusters;
 	private ThrusterCluster clockwiseThrusters;
 	private ThrusterCluster counterClockwiseThrusters;
-	protected final float thrustMultiplier = 0.0001f;
 	private Vector2f targetPosition;
 	private double targetRange;
 	private double targetAngle;
@@ -38,7 +37,6 @@ public class AIShip  extends Ship implements Renderable{
 		targetPosition = new Vector2f(0, 0);
 		targetRange = 100;
 		targetAngle = angle;
-		shipSize = 8;
 		anglePID = new MiniPID(1, 0.001, 45); 
         anglePID.setOutputLimits(-1, 1);
         
@@ -197,9 +195,18 @@ public class AIShip  extends Ship implements Renderable{
 		targetPosition.sub(position);
 		
 		targetAngle = targetPosition.getTheta();
+		Vector2f curVel = new Vector2f(velocity);
+		curVel.normalise();
+		curVel.scale(velocity.length());
 		
+		Vector2f tarVel = new Vector2f(targetPosition);
+		tarVel.normalise();
+		tarVel.scale(velocity.length() * 2);
+		
+		targetAngle = Math.toDegrees(Math.atan2(tarVel.y - curVel.y, tarVel.x - curVel.x)); 
 		
 		pts.clear();
+		//angle = targetAngle;
 		double angleDifference = Utility.getAngleDiffernce(angle, targetAngle);		// Use PID to set the ships rotation
         double anglePIDOutput = anglePID.getOutput(angle, angle + angleDifference);
         if(anglePIDOutput > 0){
@@ -207,9 +214,9 @@ public class AIShip  extends Ship implements Renderable{
         }else{
             accelerateCounterClockwise(Math.abs(anglePIDOutput));
         }
-        
-        
-        if(anglePIDOutput < 0.0025){
+//        
+//        
+        if(angleDifference < Math.abs(3)){
     		accelerateForward(1);
         }
         // TODO Thrust when pointing the right direction
@@ -254,19 +261,19 @@ public class AIShip  extends Ship implements Renderable{
 				}
 			}
 			
-			g.setColor(Color.red);
-			Vector2f dbg = new Vector2f(angle);
-			dbg.scale(50);
-			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
-			
 			g.setColor(Color.blue);
-			dbg = new Vector2f(targetAngle);
+			Vector2f dbg = new Vector2f(targetAngle);
 			dbg.scale(50);
 			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
 			
 			g.setColor(Color.green);
 			dbg = new Vector2f(velocity);
 			dbg.normalise();
+			dbg.scale(50);
+			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
+			
+			g.setColor(Color.red);
+			dbg = new Vector2f(angle);
 			dbg.scale(50);
 			g.drawLine(100, 100, 100 + dbg.getX(), 100 + dbg.getY());
 			

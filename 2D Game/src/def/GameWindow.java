@@ -125,6 +125,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 		} else if(key == Input.KEY_SPACE){
 			ship.setPosition(500, 500);
 			ship.setVelocity( new Vector2f(0, 0));
+			aiShip.setVelocity(new Vector2f(.1f,.1f));
 		} else if(key == Input.KEY_N){
 			ShipPart sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
 			sp.addKeyMap(Input.KEY_NUMPAD2, 1);
