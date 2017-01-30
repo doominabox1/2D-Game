@@ -26,7 +26,7 @@ public class AIShip  extends Ship implements Renderable{
 	private ThrusterCluster backwardThrusters;
 	private ThrusterCluster clockwiseThrusters;
 	private ThrusterCluster counterClockwiseThrusters;
-	
+	protected final float thrustMultiplier = 0.0001f;
 	private Vector2f targetPosition;
 	private double targetRange;
 	private double targetAngle;
@@ -38,8 +38,8 @@ public class AIShip  extends Ship implements Renderable{
 		targetPosition = new Vector2f(0, 0);
 		targetRange = 100;
 		targetAngle = angle;
-		
-		anglePID = new MiniPID(1, 0.001, 30); 
+		shipSize = 8;
+		anglePID = new MiniPID(1, 0.001, 45); 
         anglePID.setOutputLimits(-1, 1);
         
 	}
@@ -197,13 +197,6 @@ public class AIShip  extends Ship implements Renderable{
 		targetPosition.sub(position);
 		
 		targetAngle = targetPosition.getTheta();
-		
-		if(Math.abs(Utility.getAngleDiffernce(angle, targetAngle)) < 30){	// If the target angle is less than 90* away, switch to advanced targeting
-			if(Math.abs(Math.abs(Utility.getAngleDiffernce(velocity.getTheta(), targetAngle))) > 30){ // TODO fix this mess
-				accelerateForward(1);
-			}
-			targetAngle = targetAngle + Utility.getAngleDiffernce(velocity.getTheta(), targetAngle);
-		}
 		
 		
 		pts.clear();

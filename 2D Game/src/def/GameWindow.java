@@ -112,8 +112,6 @@ public class GameWindow extends BasicGame  implements InputListener{
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-		g.scale(0.5f, 0.5f);
-		g.translate(gc.getWidth() / 2, gc.getHeight() / 2);
 		for( Renderable r : renderList){
 			r.render(gc, g);
 		}
