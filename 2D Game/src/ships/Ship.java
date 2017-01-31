@@ -155,7 +155,7 @@ public abstract class Ship {
 		changed = true;
 	}
 	public void setVelocity(Vector2f v) {
-		velocity = v;
+		velocity = new Vector2f(v);
 	}
 	public void restoreHealth(){
 		for(ShipPart[] partArray : ship){
@@ -169,5 +169,8 @@ public abstract class Ship {
 	}
 	public Vector2f getCenterObject() {
 		return center;
+	}
+	public Vector2f getVelocity() {
+		return new Vector2f(velocity);
 	}
 }

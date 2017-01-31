@@ -10,6 +10,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import ships.AIShip;
@@ -22,10 +23,13 @@ public class GameWindow extends BasicGame  implements InputListener{
 	Input input;
 	PlayerShip ship;
 	AIShip aiShip;
+	Rectangle camera;
 	ArrayList<Renderable> renderList = new ArrayList<Renderable>();
 	
 	@Override
 	public void init(GameContainer gc) throws SlickException {
+		
+		camera = new Rectangle(0, 0, gc.getWidth(), gc.getHeight());
 		
 		char[][] s =  {
 				{'7', '7', '8', 'h', '2', '1', '1'},
@@ -97,25 +101,26 @@ public class GameWindow extends BasicGame  implements InputListener{
 		aiShip.setPosition(500, 500);
 		
 		renderList.add(bg);
-		//renderList.add(ship);
+		renderList.add(ship);
 		renderList.add(aiShip);
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		input.poll(gc.getWidth(), gc.getHeight());
-		//ship.setPosition(input.getMouseX(), input.getMouseY());
-		//ship.update(delta, input);
+		ship.update(delta, input);
+		aiShip.setTarget(ship.getPosition().add(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2)), ship.getVelocity());
 		aiShip.update(delta, input);
-		
+		camera.setLocation(ship.getPosition());//.sub(new Vector2f(camera.getHeight() / 2, camera.getWidth() / 2)));
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
+//		g.scale(0.5f, 0.5f);
+//		g.translate(gc.getWidth() / 2, gc.getHeight() / 2);
 		for( Renderable r : renderList){
-			r.render(gc, g);
+			r.render(gc, g, camera);
 		}
-		
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -26,22 +27,18 @@ public class AIShip  extends Ship implements Renderable{
 	private ThrusterCluster backwardThrusters;
 	private ThrusterCluster clockwiseThrusters;
 	private ThrusterCluster counterClockwiseThrusters;
-	private double forwardThrustTotal;
-	private double backwardThrustTotal;
-	private double clockwiseThrustTotal;
-	private double counterClockwiseThrustTotal;
-	
 	
 	private Vector2f targetPosition;
+	private Vector2f targetVelocity;
 	private double targetRange;
 	private double targetAngle;
 	MiniPID anglePID;
-	
+
 	public AIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
 		
 		targetPosition = new Vector2f(0, 0);
-		targetRange = 200;
+		targetRange = 250;
 		targetAngle = angle;
 		anglePID = new MiniPID(1, 0.1, 30); 
         anglePID.setOutputLimits(-1, 1);
@@ -195,26 +192,20 @@ public class AIShip  extends Ship implements Renderable{
 			angle += 360;
 		}
 		
-//		if(angularVelocity > 10){			// Clamp rotation speed
-//			angularVelocity = 10;
-//		}else if(angularVelocity < -10){
-//			angularVelocity = -10;
-//		}
-		
-		
-		targetPosition.set(input.getMouseX(), input.getMouseY());
 		
 		// Ship AI
-		float distanceToTarget = targetPosition.distance(position); 
-		targetPosition.sub(position);
+		float distanceToTarget = targetPosition.distanceSquared(position); 
 		
-		if(distanceToTarget > targetRange){	// If the target is close to being within range, slow down
-			targetAngle = targetPosition.getTheta();
+		Vector2f alterableTargetPosition = new Vector2f(targetPosition);
+		alterableTargetPosition.sub(position);
+		
+		if(distanceToTarget > targetRange * targetRange){	// If the target is close to being within range, slow down
+			targetAngle = alterableTargetPosition.getTheta();
 			Vector2f curVel = new Vector2f(velocity);
 			curVel.normalise();
 			curVel.scale(velocity.length());
 			
-			Vector2f tarVel = new Vector2f(targetPosition);
+			Vector2f tarVel = new Vector2f(alterableTargetPosition);
 			tarVel.normalise();
 			tarVel.scale(velocity.length() * 2);
 			
@@ -224,6 +215,8 @@ public class AIShip  extends Ship implements Renderable{
 		}
 		
 		pts.clear();
+		
+		// TODO fix thrusters firing greater than their max thrust
 		double angleDifference = Utility.getAngleDiffernce(angle, targetAngle);	// Use PID to set the ships rotation
         double anglePIDOutput = anglePID.getOutput(angle, angle + angleDifference);
         if(anglePIDOutput > 0){
@@ -232,14 +225,14 @@ public class AIShip  extends Ship implements Renderable{
             accelerateCounterClockwise(Math.abs(anglePIDOutput));
         }
 
-        if(distanceToTarget > targetRange){
+        if(distanceToTarget > targetRange * targetRange){
 	        if(angleDifference < Math.abs(10)){
 	    		accelerateForward(1);
 	        }
         }else{
         	if(angleDifference < Math.abs(25)){
         		if(velocity.length() > 0.005){
-        			accelerateBackward(1.25);
+        			accelerateBackward(1.5);
         		}
 	        }
         }
@@ -255,10 +248,12 @@ public class AIShip  extends Ship implements Renderable{
 	}
 	
 	@Override
-	public void render(GameContainer gc, Graphics g) {
+	public void render(GameContainer gc, Graphics g, Rectangle camera) {
 		if(positionOnScreen == null){
 			positionOnScreen = new Vector2f(gc.getWidth() / 2, gc.getHeight() / 2);
 		}
+		Vector2f drawPosition = new Vector2f(position);
+		drawPosition.sub(camera.getLocation());
 		for (int i = 0; i < ship.length; i++) {			// Draw each ship component
 			for (int j = 0; j < ship[0].length; j++) {
 				Image curImage = hullList[i][j];
@@ -268,21 +263,21 @@ public class AIShip  extends Ship implements Renderable{
 				Vector2f p = Utility.getVectorFromArrayLocation(i, j, shipSize, ship);
 				curImage.setCenterOfRotation(center.x - p.x, center.y - p.y);
 				curImage.setRotation((float) angle);
-				curImage.draw(position.x - center.x + p.x, position.y - center.y + p.y, (float) shipSize, (float) shipSize);
+				curImage.draw(drawPosition.x - center.x + p.x, drawPosition.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
 		if(debug){
 			g.setColor(Color.blue);
 			g.setLineWidth(3);
-			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(position.x, position.y)));
+			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(drawPosition.x, drawPosition.y)));
 			g.resetLineWidth();
 			
 			g.setColor(Color.green);
 			if(pts != null){
 				for (Vector2f[] vs : pts) {
-					g.drawOval(position.x + vs[0].x, position.y + vs[0].y, 2, 2);
+					g.drawOval(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, 2, 2);
 					vs[1].scale(8000);
-					g.drawLine(position.x + vs[0].x, position.y + vs[0].y, position.x + vs[0].x + vs[1].x, position.y + vs[0].y + vs[1].y);
+					g.drawLine(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, drawPosition.x + vs[0].x + vs[1].x, drawPosition.y + vs[0].y + vs[1].y);
 				}
 			}
 			
@@ -304,9 +299,12 @@ public class AIShip  extends Ship implements Renderable{
 			
 			g.drawLine(100, 200, (float) (100 + angularVelocity * 100), 200);
 			
-			Vector2f t = new Vector2f(targetPosition);
-			t.add(position);
-			g.drawOval((float) (t.x - targetRange), (float) (t.y - targetRange), (float)targetRange * 2, (float)targetRange * 2);
+			g.drawOval((float) (-camera.getX() + targetPosition.x - targetRange), (float) (-camera.getY() + targetPosition.y - targetRange), (float)targetRange * 2, (float)targetRange * 2);
 		}
+	}
+
+	public void setTarget(Vector2f newTargetPosition, Vector2f newTargetVelocity) {
+		targetPosition.set(targetPosition.copy());
+		targetVelocity.set(newTargetVelocity.copy());
 	}
 }
