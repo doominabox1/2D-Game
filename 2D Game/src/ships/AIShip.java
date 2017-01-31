@@ -26,6 +26,12 @@ public class AIShip  extends Ship implements Renderable{
 	private ThrusterCluster backwardThrusters;
 	private ThrusterCluster clockwiseThrusters;
 	private ThrusterCluster counterClockwiseThrusters;
+	private double forwardThrustTotal;
+	private double backwardThrustTotal;
+	private double clockwiseThrustTotal;
+	private double counterClockwiseThrustTotal;
+	
+	
 	private Vector2f targetPosition;
 	private double targetRange;
 	private double targetAngle;
