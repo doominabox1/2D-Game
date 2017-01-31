@@ -38,6 +38,7 @@ public class AIShip  extends Ship implements Renderable{
 		super(xSize, ySize, spriteSheetPath, spriteSize);
 		
 		targetPosition = new Vector2f(0, 0);
+		targetVelocity = new Vector2f(0, 0);
 		targetRange = 250;
 		targetAngle = angle;
 		anglePID = new MiniPID(1, 0.1, 30); 
@@ -304,7 +305,7 @@ public class AIShip  extends Ship implements Renderable{
 	}
 
 	public void setTarget(Vector2f newTargetPosition, Vector2f newTargetVelocity) {
-		targetPosition.set(targetPosition.copy());
+		targetPosition.set(newTargetPosition.copy());
 		targetVelocity.set(newTargetVelocity.copy());
 	}
 }
