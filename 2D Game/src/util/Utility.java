@@ -1,4 +1,4 @@
-package def;
+package util;
 
 
 import org.newdawn.slick.geom.Vector2f;

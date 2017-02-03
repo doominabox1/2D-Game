@@ -15,10 +15,10 @@ import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
 import def.ShipPart;
-import def.Utility;
 import pairobjects.ShipPartPoint;
 import pairobjects.ThrusterCluster;
 import util.MiniPID;
+import util.Utility;
 
 public class AIShip  extends Ship implements Renderable{
 	private boolean initialized = false;

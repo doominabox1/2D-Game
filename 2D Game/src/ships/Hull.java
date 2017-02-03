@@ -4,7 +4,7 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.ShipPart;
-import def.Utility;
+import util.Utility;
 
 public class Hull {
 	private ShipPart[][] shipPart;

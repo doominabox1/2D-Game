@@ -12,7 +12,7 @@ import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.ShipPart;
-import def.Utility;
+import util.Utility;
 
 
 public abstract class Ship {
@@ -36,6 +36,7 @@ public abstract class Ship {
 	protected ArrayList<Vector2f[]> pts = new ArrayList<Vector2f[]>();
 	
 	protected Hull hull;
+	protected int priority;
 
 	
 	public Ship(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException{
@@ -50,6 +51,7 @@ public abstract class Ship {
 		position = new Vector2f(0, 0); 
 		velocity = new Vector2f(0, 0);
 		center = new Vector2f(0, 0);
+		priority = 0;
 		updateBlocks();
 	}
 
@@ -172,5 +174,11 @@ public abstract class Ship {
 	}
 	public Vector2f getVelocity() {
 		return new Vector2f(velocity);
+	}
+	public int getRenderPriority() {
+		return priority;
+	}
+	public void setRenderPriority(int newPriority) {
+		priority = newPriority;
 	}
 }

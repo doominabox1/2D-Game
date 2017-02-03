@@ -10,12 +10,13 @@ import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
-import def.Utility;
+import util.Utility;
 
 
 public class PlayerShip extends Ship implements Renderable{
 	public PlayerShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
+		priority = Integer.MAX_VALUE;
 	}
 	@Override
 	public void update(int delta, Input input){
