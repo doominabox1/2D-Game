@@ -8,6 +8,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -96,7 +97,11 @@ public abstract class Ship {
 		if(hull == null){
 			hull = new Hull(ship, this);
 		}
-		return (Polygon) hull.getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(positionOnScreen.x, positionOnScreen.y));
+		return (Polygon) hull.getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(position.x, position.y));
+	}
+	public Rectangle getSimpleClippingHull(){
+		Polygon hull = getClippingHull();
+		return new Rectangle(hull.getMinX(), hull.getMinY(), hull.getWidth(), hull.getHeight());
 	}
 	
 	

@@ -109,10 +109,10 @@ public class AIShip  extends Ship implements Renderable{
 			}
 		}
 		
-		System.out.println(forwardThrusters); // Print for debug
-		System.out.println(backwardThrusters);
-		System.out.println(clockwiseThrusters);
-		System.out.println(counterClockwiseThrusters);
+//		System.out.println(forwardThrusters); // Print for debug
+//		System.out.println(backwardThrusters);
+//		System.out.println(clockwiseThrusters);
+//		System.out.println(counterClockwiseThrusters);
 		velocity.set(0, 0);
 		angularVelocity = 0;
 	}
@@ -171,10 +171,10 @@ public class AIShip  extends Ship implements Renderable{
 	@Override
 	public void update(int delta, Input input){
 		
-		if(input.isKeyDown(Input.KEY_SPACE)){
-			position.set(500, 500);
-			velocity.set(0,0);
-		}
+//		if(input.isKeyDown(Input.KEY_SPACE)){
+//			position.set(500, 500);
+//			velocity.set(0,0);
+//		}
 
 		Vector2f temp = new Vector2f(velocity);	// Update position using velocity and delta
 		temp.scale(delta);
@@ -252,6 +252,9 @@ public class AIShip  extends Ship implements Renderable{
 	public void render(GameContainer gc, Graphics g, Rectangle camera) {
 		if(positionOnScreen == null){
 			positionOnScreen = new Vector2f(gc.getWidth() / 2, gc.getHeight() / 2);
+		}
+		if(!(camera.contains(getSimpleClippingHull()) || camera.intersects(getSimpleClippingHull()))){
+			return;
 		}
 		Vector2f drawPosition = new Vector2f(position);
 		drawPosition.sub(camera.getLocation());

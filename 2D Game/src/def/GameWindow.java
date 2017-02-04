@@ -116,7 +116,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 			ais.setTarget(playerShip.getPosition().add(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2)), playerShip.getVelocity());
 			ais.update(delta, input);
 		}
-		camera.setLocation(playerShip.getPosition());//.sub(new Vector2f(camera.getHeight() / 2, camera.getWidth() / 2)));
+		camera.setLocation(playerShip.getPosition());
 	}
 
 	@Override
