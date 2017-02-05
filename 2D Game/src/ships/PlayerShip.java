@@ -1,15 +1,16 @@
 package ships;
-import org.newdawn.slick.Color;
+import java.awt.Point;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
+import pairobjects.ShipPartPoint;
 import util.Utility;
 
 
@@ -40,7 +41,8 @@ public class PlayerShip extends Ship implements Renderable{
 			angle += 360;
 		}
 		
-		pts.clear();
+//		pts.clear();
+		firingThrusters.clear();
 		for (int i = 0; i < ship.length; i++) { // Thrust 
 			for (int j = 0; j < ship[0].length; j++) {
 				Vector2f thrustWeight = ship[i][j].getThrust(thrustMultiplier, input);
@@ -58,7 +60,9 @@ public class PlayerShip extends Ship implements Renderable{
 					continue;
 				}
 				
-				pts.add(new Vector2f[]{tPosition, tDirection});
+				firingThrusters.add(new ShipPartPoint(ship[i][j], new Point(i, j)));
+				
+//				pts.add(new Vector2f[]{tPosition, tDirection});
 				applyForce(tPosition, tDirection);
 
 			}
@@ -77,6 +81,9 @@ public class PlayerShip extends Ship implements Renderable{
 	
 	@Override
 	public void render(GameContainer gc, Graphics g, Rectangle camera) {
+		if(hull == null){
+			getHull();
+		}
 		if(positionOnScreen == null){
 			positionOnScreen = new Vector2f(gc.getWidth() / 2, gc.getHeight() / 2);
 		}
@@ -92,20 +99,30 @@ public class PlayerShip extends Ship implements Renderable{
 				curImage.draw(positionOnScreen.x - center.x + p.x, positionOnScreen.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
-		if(debug){
-			g.setColor(Color.blue);
-			g.setLineWidth(3);
-			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(positionOnScreen.x, positionOnScreen.y)));
-			g.resetLineWidth();
-			
-			g.setColor(Color.green);
-			if(pts != null){
-				for (Vector2f[] vs : pts) {
-					g.drawOval(positionOnScreen.x + vs[0].x, positionOnScreen.y + vs[0].y, 2, 2);
-					vs[1].scale(8000);
-					g.drawLine(positionOnScreen.x + vs[0].x, positionOnScreen.y + vs[0].y, positionOnScreen.x + vs[0].x + vs[1].x, positionOnScreen.y + vs[0].y + vs[1].y);
-				}
+		if(firingThrusters != null){	// Draw thruster points
+			for (ShipPartPoint spp : firingThrusters) {
+				Point thrusterLocation = spp.shipPart.getThrusterLocation(); 
+				Image curImage = spriteSheet.getSubImage(5 + spp.shipPart.getDirection() / 90, 0);
+				Vector2f p = Utility.getVectorFromArrayLocation(spp.point.x + thrusterLocation.x, spp.point.y + thrusterLocation.y, shipSize, ship);
+				curImage.setCenterOfRotation(center.x - p.x, center.y - p.y);
+				curImage.setRotation((float) angle);
+				curImage.draw(positionOnScreen.x - center.x + p.x, positionOnScreen.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
+//		if(debug){
+//			g.setColor(Color.blue);
+//			g.setLineWidth(3);
+//			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(positionOnScreen.x, positionOnScreen.y)));
+//			g.resetLineWidth();
+//			
+//			g.setColor(Color.green);
+//			if(pts != null){
+//				for (Vector2f[] vs : pts) {
+//					g.drawOval(positionOnScreen.x + vs[0].x, positionOnScreen.y + vs[0].y, 2, 2);
+//					vs[1].scale(8000);
+//					g.drawLine(positionOnScreen.x + vs[0].x, positionOnScreen.y + vs[0].y, positionOnScreen.x + vs[0].x + vs[1].x, positionOnScreen.y + vs[0].y + vs[1].y);
+//				}
+//			}
+//		}
 	}
 }

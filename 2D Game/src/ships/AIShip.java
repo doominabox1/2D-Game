@@ -10,7 +10,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
@@ -163,7 +162,8 @@ public class AIShip  extends Ship implements Renderable{
 				continue;
 			}
 			
-			pts.add(new Vector2f[]{tPosition, tDirection});
+//			pts.add(new Vector2f[]{tPosition, tDirection});
+			firingThrusters.add(new ShipPartPoint(ship[thruster.point.x][thruster.point.y], new Point(thruster.point.x, thruster.point.y)));
 			applyForce(tPosition, tDirection);
 		}
 	}
@@ -217,8 +217,8 @@ public class AIShip  extends Ship implements Renderable{
 			targetAngle = velocity.getTheta();
 		}
 		
-		pts.clear();
-		
+//		pts.clear();
+		firingThrusters.clear();
 		// TODO fix thrusters firing greater than their max thrust
 		double angleDifference = Utility.getAngleDiffernce(angle, targetAngle);	// Use PID to set the ships rotation
         double anglePIDOutput = anglePID.getOutput(angle, angle + angleDifference);
@@ -272,20 +272,30 @@ public class AIShip  extends Ship implements Renderable{
 				curImage.draw(drawPosition.x - center.x + p.x, drawPosition.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
-		if(debug){
-			g.setColor(Color.blue);
-			g.setLineWidth(3);
-			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(drawPosition.x, drawPosition.y)));
-			g.resetLineWidth();
-			
-			g.setColor(Color.green);
-			if(pts != null){
-				for (Vector2f[] vs : pts) {
-					g.drawOval(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, 2, 2);
-					vs[1].scale(8000);
-					g.drawLine(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, drawPosition.x + vs[0].x + vs[1].x, drawPosition.y + vs[0].y + vs[1].y);
-				}
+		if(firingThrusters != null){	// Draw thruster points
+			for (ShipPartPoint spp : firingThrusters) {
+				Point thrusterLocation = spp.shipPart.getThrusterLocation(); 
+				Image curImage = spriteSheet.getSubImage(5 + spp.shipPart.getDirection() / 90, 0);
+				Vector2f p = Utility.getVectorFromArrayLocation(spp.point.x + thrusterLocation.x, spp.point.y + thrusterLocation.y, shipSize, ship);
+				curImage.setCenterOfRotation(center.x - p.x, center.y - p.y);
+				curImage.setRotation((float) angle);
+				curImage.draw(drawPosition.x - center.x + p.x, drawPosition.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
+		}
+		if(debug){
+//			g.setColor(Color.blue);
+//			g.setLineWidth(3);
+//			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(drawPosition.x, drawPosition.y)));
+//			g.resetLineWidth();
+			
+//			g.setColor(Color.green);
+//			if(pts != null){
+//				for (Vector2f[] vs : pts) {
+//					g.drawOval(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, 2, 2);
+//					vs[1].scale(8000);
+//					g.drawLine(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, drawPosition.x + vs[0].x + vs[1].x, drawPosition.y + vs[0].y + vs[1].y);
+//				}
+//			}
 			
 			g.setColor(Color.blue);
 			Vector2f dbg = new Vector2f(targetAngle);
@@ -314,8 +324,37 @@ public class AIShip  extends Ship implements Renderable{
 	}
 	public static AIShip getRandomAIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException{
 		AIShip newShip = new AIShip(xSize, ySize, spriteSheetPath, spriteSize);
-		// TODO implement
-		throw new UnsupportedOperationException();
-		//return newShip;
+		
+		ShipPart sp;
+		int turnThrusterLocation = Utility.randInt(1, ySize - 2, rand);
+		for (int y = 0; y < ySize; y++) {	// TODO needs to be built sideways, or I need to fix AIShip to be based on north instead of east
+			int layerSize = Utility.randInt(1, xSize / 2, rand);
+			for(int x = (xSize / 2) - (layerSize - 1); x <= (xSize / 2) + (layerSize - 1); x++){
+				sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
+				newShip.setPart(sp, x, y);
+			}
+			
+			if(y != 0 && y != ySize - 1 && (rand.nextDouble() < 0.5 || y == turnThrusterLocation)){
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+				newShip.setPart(sp, (xSize / 2) - (layerSize - 1), y);
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
+				newShip.setPart(sp, (xSize / 2) + (layerSize - 1), y);
+			}
+			
+			if(y == 0){
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.SOUTH);
+				newShip.setPart(sp, (xSize / 2) - (layerSize - 1), 0);
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.SOUTH);
+				newShip.setPart(sp, (xSize / 2) + (layerSize - 1), 0);
+			}
+			if(y == ySize - 1){
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
+				newShip.setPart(sp, (xSize / 2) - (layerSize - 1), ySize - 1);
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
+				newShip.setPart(sp, (xSize / 2) + (layerSize - 1), ySize - 1);
+			}
+		}
+		
+		return newShip;
 	}
 }

@@ -1,6 +1,7 @@
 package ships;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -13,6 +14,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
+import pairobjects.ShipPartPoint;
 import util.IllegalBlockLocation;
 import util.Utility;
 
@@ -35,11 +37,12 @@ public abstract class Ship {
 	protected ShipPart[][] ship;
 	protected boolean changed = true;
 	protected boolean debug = true;
-	protected ArrayList<Vector2f[]> pts = new ArrayList<Vector2f[]>();
+//	protected ArrayList<Vector2f[]> pts = new ArrayList<Vector2f[]>();
+	protected ArrayList<ShipPartPoint> firingThrusters = new ArrayList<ShipPartPoint>();
 	
 	protected Hull hull;
 	protected int priority;
-
+	protected static Random rand = new Random();
 	
 	public Ship(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException{
 		ShipPart[][] shp = new ShipPart[xSize][ySize];
@@ -74,10 +77,8 @@ public abstract class Ship {
 				
 				hullList[i][j] = spriteSheet.getSubImage(ship[i][j].getHullTier(), 0);
 				if(ship[i][j].getTool() == ShipPart.THRUSTER){
-					System.out.println("Thruster at " + i + " " + j + " " + this.getClass());
 					Point thrusterLocation = ship[i][j].getThrusterLocation(); 
 					try{
-						System.out.println((i + thrusterLocation.x) + " " + (j + thrusterLocation.y));
 						if(ship[i + thrusterLocation.x][j + thrusterLocation.y].getHullTier() != ShipPart.NOTHING){
 							throw new IllegalBlockLocation("Block obstructiong thruster: " + (i + thrusterLocation.x) + " " + (j + thrusterLocation.y));
 						}

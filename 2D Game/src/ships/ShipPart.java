@@ -163,4 +163,8 @@ public class ShipPart {
 		}
 		throw new IllegalBlockLocation("Has no direction");
 	}
+
+	public short getDirection() {
+		return partDirection;
+	}
 }
