@@ -14,10 +14,10 @@ import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
-import def.ShipPart;
 import pairobjects.ShipPartPoint;
 import pairobjects.ThrusterCluster;
 import util.MiniPID;
+import util.ShipNotInitializedException;
 import util.Utility;
 
 public class AIShip  extends Ship implements Renderable{
@@ -200,6 +200,8 @@ public class AIShip  extends Ship implements Renderable{
 		Vector2f alterableTargetPosition = new Vector2f(targetPosition);
 		alterableTargetPosition.sub(position);
 		
+		// TODO Make target angle relative to how fast target is moving 
+		
 		if(distanceToTarget > targetRange * targetRange){	// If the target is close to being within range, slow down
 			targetAngle = alterableTargetPosition.getTheta();
 			Vector2f curVel = new Vector2f(velocity);
@@ -306,9 +308,14 @@ public class AIShip  extends Ship implements Renderable{
 			g.drawOval((float) (-camera.getX() + targetPosition.x - targetRange), (float) (-camera.getY() + targetPosition.y - targetRange), (float)targetRange * 2, (float)targetRange * 2);
 		}
 	}
-
 	public void setTarget(Vector2f newTargetPosition, Vector2f newTargetVelocity) {
 		targetPosition.set(newTargetPosition.copy());
 		targetVelocity.set(newTargetVelocity.copy());
+	}
+	public static AIShip getRandomAIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException{
+		AIShip newShip = new AIShip(xSize, ySize, spriteSheetPath, spriteSize);
+		// TODO implement
+		throw new UnsupportedOperationException();
+		//return newShip;
 	}
 }

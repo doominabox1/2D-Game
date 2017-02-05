@@ -1,4 +1,5 @@
-package def;
+package ships;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -6,6 +7,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f;
 
 import pairobjects.KeyWeight;
+import util.IllegalBlockLocation;
 
 public class ShipPart {
 	public static final byte NOTHING = -1;
@@ -22,9 +24,10 @@ public class ShipPart {
 	public static final byte COCKPIT	= 5;
 	
 	public static final short EAST  = 0;
-	public static final short NORTH = 90;
+	public static final short SOUTH = 90;
 	public static final short WEST  = 180;
-	public static final short SOUTH = 270;
+	public static final short NORTH = 270;
+	
 	
 	private byte hullTier;
 	private byte tool;
@@ -147,5 +150,17 @@ public class ShipPart {
 
 	public double getMass() {
 		return mass;
+	}
+	public Point getThrusterLocation(){
+		if(partDirection == NORTH){
+			return new Point(0, 1);
+		}else if(partDirection == EAST){
+			return new Point(-1, 0);
+		}else if(partDirection == SOUTH){
+			return new Point(0, -1);
+		}else if(partDirection == WEST){
+			return new Point(1, 0);
+		}
+		throw new IllegalBlockLocation("Has no direction");
 	}
 }

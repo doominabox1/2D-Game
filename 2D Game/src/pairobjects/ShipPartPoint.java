@@ -2,7 +2,7 @@ package pairobjects;
 
 import java.awt.Point;
 
-import def.ShipPart;
+import ships.ShipPart;
 
 public class ShipPartPoint {
 	public ShipPart shipPart;

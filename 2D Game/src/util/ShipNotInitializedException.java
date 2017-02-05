@@ -1,4 +1,4 @@
-package ships;
+package util;
 
 public class ShipNotInitializedException extends RuntimeException{
 	/**

@@ -58,7 +58,6 @@ public class PlayerShip extends Ship implements Renderable{
 					continue;
 				}
 				
-				
 				pts.add(new Vector2f[]{tPosition, tDirection});
 				applyForce(tPosition, tDirection);
 
@@ -67,7 +66,6 @@ public class PlayerShip extends Ship implements Renderable{
 		if(input.isKeyDown(Input.KEY_R)){
 			angularVelocity = 0;
 		}
-		
 		
 		if(changed){		// Update center of mass and ship physics
 			updateBlocks();

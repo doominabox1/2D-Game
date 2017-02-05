@@ -14,6 +14,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 import ships.AIShip;
 import ships.PlayerShip;
+import ships.ShipPart;
 import util.PriorityArrayList;
 
 public class GameWindow extends BasicGame  implements InputListener{
@@ -28,28 +29,42 @@ public class GameWindow extends BasicGame  implements InputListener{
 	
 	@Override
 	public void init(GameContainer gc) throws SlickException {
-		
+		input = new Input(gc.getHeight());
 		camera = new Rectangle(0, 0, gc.getWidth(), gc.getHeight());
 		
 		char[][] s =  {
-				{'7', '7', '8', 'h', '2', '1', '1'},
-				{'n', 'h', '8', 'h', '2', 'h', 'n'},
-				{'9', '9', '8', 'h', '2', '3', '3'},
+				{'n', 'n', 'n', 'n', 'n', 'n', 'n'},
+				{'8', '7', '7', 'h', '1', '1', '2'},
+				{'8', 'u', 'h', 'h', 'h', 'h', '2'},
+				{'8', '9', '9', 'h', '3', '3', '2'},
+				{'n', 'n', 'n', 'n', 'n', 'n', 'n'},
 		};
-		
-		input = new Input(gc.getHeight());
 		
 		playerShip = new PlayerShip(s.length, s[0].length, "res/tilesets/mc.png", 32);
 		ShipPart sp;
+		
+//		playerShip = new PlayerShip(3, 3, "res/tilesets/mc.png", 32);
+//		ShipPart sp;
+//		
+//		sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+//		sp.addKeyMap(Input.KEY_RIGHT, 1);
+//		playerShip.setPart(sp, 1, 1);
+//		
+//		sp = new ShipPart(ShipPart.TIER2, ShipPart.NOTHING, ShipPart.NOTHING, ShipPart.NOTHING);
+//		playerShip.setPart(sp, 2, 1);
+		
 		
 		for (int i = 0; i < s.length; i++) {
 			for (int j = 0; j < s[0].length; j++) {
 				if(s[i][j] == 'h'){
 					sp = new ShipPart(ShipPart.TIER2, ShipPart.NOTHING, ShipPart.NOTHING, ShipPart.NOTHING);
 					playerShip.setPart(sp, i, j);
-				}else if(s[i][j] == '8'){
+				}else if(s[i][j] == 'u'){
+					sp = new ShipPart(ShipPart.TIER3, ShipPart.NOTHING, ShipPart.NOTHING, ShipPart.NOTHING);
+					playerShip.setPart(sp, i, j);
+				} if(s[i][j] == '8'){
 					sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.SOUTH);
-					sp.addKeyMap(Input.KEY_UP, 1);
+					sp.addKeyMap(Input.KEY_DOWN, 1);
 					playerShip.setPart(sp, i, j);
 				}else if(s[i][j] == '7'){
 					sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
@@ -69,7 +84,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 					playerShip.setPart(sp, i, j);
 				}else if(s[i][j] == '2'){
 					sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
-					sp.addKeyMap(Input.KEY_DOWN, 1);
+					sp.addKeyMap(Input.KEY_UP, 1);
 					playerShip.setPart(sp, i, j);
 				}else if(s[i][j] == 'n'){
 					sp = new ShipPart();
@@ -80,8 +95,8 @@ public class GameWindow extends BasicGame  implements InputListener{
 		
 		Background bg = new Background("res/tilesets/stars.png", playerShip.getPositionObject());
 		
-		aiShip = new AIShip[50];
-		for(int i = 0; i < 50; i++){
+		aiShip = new AIShip[1];
+		for(int i = 0; i < 1; i++){
 			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
 			
 			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
@@ -91,10 +106,10 @@ public class GameWindow extends BasicGame  implements InputListener{
 			aiShip[i].setPart(sp, 1, 2);
 			
 			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.EAST);
-			aiShip[i].setPart(sp, 2, 1);
+			aiShip[i].setPart(sp, 0, 1);
 			
 			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
-			aiShip[i].setPart(sp, 0, 1);
+			aiShip[i].setPart(sp, 2, 1);
 			
 			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
 			aiShip[i].setPart(sp, 1, 1);

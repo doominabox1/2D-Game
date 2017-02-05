@@ -3,7 +3,6 @@ package ships;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 
-import def.ShipPart;
 import util.Utility;
 
 public class Hull {

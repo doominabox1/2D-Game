@@ -1,4 +1,5 @@
 package ships;
+import java.awt.Point;
 import java.util.ArrayList;
 
 import org.newdawn.slick.GameContainer;
@@ -12,7 +13,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
-import def.ShipPart;
+import util.IllegalBlockLocation;
 import util.Utility;
 
 
@@ -72,6 +73,18 @@ public abstract class Ship {
 				bottom += ship[i][j].getMass();
 				
 				hullList[i][j] = spriteSheet.getSubImage(ship[i][j].getHullTier(), 0);
+				if(ship[i][j].getTool() == ShipPart.THRUSTER){
+					System.out.println("Thruster at " + i + " " + j + " " + this.getClass());
+					Point thrusterLocation = ship[i][j].getThrusterLocation(); 
+					try{
+						System.out.println((i + thrusterLocation.x) + " " + (j + thrusterLocation.y));
+						if(ship[i + thrusterLocation.x][j + thrusterLocation.y].getHullTier() != ShipPart.NOTHING){
+							throw new IllegalBlockLocation("Block obstructiong thruster: " + (i + thrusterLocation.x) + " " + (j + thrusterLocation.y));
+						}
+					}catch(ArrayIndexOutOfBoundsException e){
+						continue;
+					}
+				}
 			}
 		}
 		center = new Vector2f((float)((topX / bottom) + (shipSize / 2)), (float)((topY / bottom) + (shipSize / 2)));
