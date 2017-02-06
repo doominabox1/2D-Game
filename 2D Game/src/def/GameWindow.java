@@ -96,33 +96,33 @@ public class GameWindow extends BasicGame  implements InputListener{
 		Background bg = new Background("res/tilesets/stars.png", playerShip.getPositionObject());
 		
 		aiShip = new AIShip[1];
-//		for(int i = 0; i < 1; i++){
-//			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
-//			aiShip[i].setPart(sp, 1, 0);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
-//			aiShip[i].setPart(sp, 1, 2);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.EAST);
-//			aiShip[i].setPart(sp, 0, 1);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
-//			aiShip[i].setPart(sp, 2, 1);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
-//			aiShip[i].setPart(sp, 1, 1);
-//			
-//			aiShip[i].initFunctions();
-//			aiShip[i].setPosition(i * 200, i * 200);
-//			renderList.addOrdered(aiShip[i]);
-//		}
+		for(int i = 0; i < 1; i++){
+			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+			aiShip[i].setPart(sp, 1, 0);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+			aiShip[i].setPart(sp, 1, 2);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.EAST);
+			aiShip[i].setPart(sp, 0, 1);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
+			aiShip[i].setPart(sp, 2, 1);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
+			aiShip[i].setPart(sp, 1, 1);
+			
+			aiShip[i].initFunctions();
+			aiShip[i].setPosition(i * 200, i * 200);
+			renderList.addOrdered(aiShip[i]);
+		}
 		
-		aiShip[0] = AIShip.getRandomAIShip(6, 6, "res/tilesets/mc.png", 32);
-		
-		aiShip[0].initFunctions();
-		aiShip[0].setPosition(200, 200);
+//		aiShip[0] = AIShip.getRandomAIShip(6, 6, "res/tilesets/mc.png", 32);
+//		
+//		aiShip[0].initFunctions();
+//		aiShip[0].setPosition(200, 200);
 		renderList.addOrdered(aiShip[0]);
 		
 		renderList.addOrdered(bg);
