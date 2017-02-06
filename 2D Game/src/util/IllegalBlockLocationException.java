@@ -1,12 +1,12 @@
 package util;
 
-public class IllegalBlockLocation extends RuntimeException{
+public class IllegalBlockLocationException extends RuntimeException{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8324454502406685928L;
 
-	public IllegalBlockLocation(String message){
+	public IllegalBlockLocationException(String message){
 		super(message);
 	}
 }

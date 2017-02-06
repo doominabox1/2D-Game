@@ -17,6 +17,7 @@ import pairobjects.ShipPartPoint;
 import pairobjects.ThrusterCluster;
 import util.MiniPID;
 import util.ShipNotInitializedException;
+import util.SimplexNoise;
 import util.Utility;
 
 public class AIShip  extends Ship implements Renderable{
@@ -84,6 +85,7 @@ public class AIShip  extends Ship implements Renderable{
 			    }
 			}
 		}
+		System.out.println(subsets.size());
 		for (ShipPartPoint[] subset : subsets) {
 			velocity.set(0, 0);
 			angularVelocity = 0;
@@ -324,34 +326,37 @@ public class AIShip  extends Ship implements Renderable{
 	}
 	public static AIShip getRandomAIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException{
 		AIShip newShip = new AIShip(xSize, ySize, spriteSheetPath, spriteSize);
-		
+		SimplexNoise sn = new SimplexNoise(rand.nextInt());
 		ShipPart sp;
-		int turnThrusterLocation = Utility.randInt(1, ySize - 2, rand);
-		for (int y = 0; y < ySize; y++) {	// TODO needs to be built sideways, or I need to fix AIShip to be based on north instead of east
-			int layerSize = Utility.randInt(1, xSize / 2, rand);
-			for(int x = (xSize / 2) - (layerSize - 1); x <= (xSize / 2) + (layerSize - 1); x++){
+		int turnThrusterLocation = Utility.randInt(1, xSize - 2, rand);
+		for (int x = 0; x < xSize; x++) {
+			double octave = x * 0.05;
+			int layerSize = (int) (((sn.noise(octave, octave) + 1) / 2) * ((ySize / 2) + ySize % 2)) + 1;
+			layerSize += layerSize == 1 ? 1 : 0;
+			
+			for(int y = (ySize / 2) - (layerSize - 1); y <= (ySize / 2) + (layerSize - 1); y++){
 				sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
 				newShip.setPart(sp, x, y);
 			}
 			
-			if(y != 0 && y != ySize - 1 && (rand.nextDouble() < 0.5 || y == turnThrusterLocation)){
-				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
-				newShip.setPart(sp, (xSize / 2) - (layerSize - 1), y);
-				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
-				newShip.setPart(sp, (xSize / 2) + (layerSize - 1), y);
+			if(x != 0 && x != xSize - 1 && (rand.nextDouble() < 0.5 || x == turnThrusterLocation)){
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.SOUTH);
+				newShip.setPart(sp, x, (ySize / 2) - (layerSize - 1));
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
+				newShip.setPart(sp, x, (ySize / 2) + (layerSize - 1));
 			}
 			
-			if(y == 0){
-				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.SOUTH);
-				newShip.setPart(sp, (xSize / 2) - (layerSize - 1), 0);
-				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.SOUTH);
-				newShip.setPart(sp, (xSize / 2) + (layerSize - 1), 0);
+			if(x == 0){
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+				newShip.setPart(sp, 0, (ySize / 2) - (layerSize - 1));
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+				newShip.setPart(sp, 0, (ySize / 2) + (layerSize - 1));
 			}
-			if(y == ySize - 1){
-				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
-				newShip.setPart(sp, (xSize / 2) - (layerSize - 1), ySize - 1);
-				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
-				newShip.setPart(sp, (xSize / 2) + (layerSize - 1), ySize - 1);
+			if(x == xSize - 1){
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
+				newShip.setPart(sp, xSize - 1, (ySize / 2) - (layerSize - 1));
+				sp = new ShipPart(ShipPart.TIER2, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
+				newShip.setPart(sp, xSize - 1, (ySize / 2) + (layerSize - 1));
 			}
 		}
 		

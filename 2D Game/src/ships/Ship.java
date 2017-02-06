@@ -15,7 +15,7 @@ import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import pairobjects.ShipPartPoint;
-import util.IllegalBlockLocation;
+import util.IllegalBlockLocationException;
 import util.Utility;
 
 
@@ -29,7 +29,7 @@ public abstract class Ship {
 	protected double angularVelocity;
 	protected int shipSize = 20;
 	protected double shipMass;
-	protected final float thrustMultiplier = 0.001f;
+	protected final float thrustMultiplier = 0.05f;
 	
 	protected SpriteSheet spriteSheet;
 	
@@ -80,7 +80,7 @@ public abstract class Ship {
 					Point thrusterLocation = ship[i][j].getThrusterLocation(); 
 					try{
 						if(ship[i + thrusterLocation.x][j + thrusterLocation.y].getHullTier() != ShipPart.NOTHING){
-							throw new IllegalBlockLocation("Block obstructiong thruster: " + (i + thrusterLocation.x) + " " + (j + thrusterLocation.y));
+							throw new IllegalBlockLocationException("Block obstructiong thruster: " + (i + thrusterLocation.x) + " " + (j + thrusterLocation.y));
 						}
 					}catch(ArrayIndexOutOfBoundsException e){
 						continue;
@@ -133,19 +133,23 @@ public abstract class Ship {
 		if (force.length() == 0) {
 			return;
 		}
-		velocity.add(force);
+		Vector2f forceAndMass = new Vector2f(force);
+		forceAndMass.scale((float) (1 / shipMass));
+		velocity.add(forceAndMass);
 	    if(position.lengthSquared() < 1){
 	    	return;
 	    }
 	    // the difference between the direction of force and direction to center
 	    double pheta = Math.toRadians(position.getTheta() - force.getTheta());
-	    double Fr = Math.sin(pheta) * force.length(); 	// The amount of the force that
-	    												// contributes to angular acceleration
-	    												// along the tangent from the center
+	    
+	    // The amount of the force that
+	 	// contributes to angular acceleration
+	 	// along the tangent from the center
+	    double Fr = Math.sin(pheta) * force.length() * (position.length() * 10);
+	    
 
 	    // reduce angular acceleration by distance and mass
-	    Fr /= (position.length()  * shipMass);  
-	    angularVelocity += -Fr * 300;
+	    angularVelocity += -Fr / (shipMass * shipMass * shipMass);
 
 	}
 	

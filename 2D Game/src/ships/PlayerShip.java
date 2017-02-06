@@ -109,6 +109,8 @@ public class PlayerShip extends Ship implements Renderable{
 				curImage.draw(positionOnScreen.x - center.x + p.x, positionOnScreen.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
+		System.out.println(position);
+		
 //		if(debug){
 //			g.setColor(Color.blue);
 //			g.setLineWidth(3);

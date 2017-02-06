@@ -7,7 +7,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f;
 
 import pairobjects.KeyWeight;
-import util.IllegalBlockLocation;
+import util.IllegalBlockLocationException;
 
 public class ShipPart {
 	public static final byte NOTHING = -1;
@@ -161,7 +161,7 @@ public class ShipPart {
 		}else if(partDirection == WEST){
 			return new Point(1, 0);
 		}
-		throw new IllegalBlockLocation("Has no direction");
+		throw new IllegalBlockLocationException("Has no direction");
 	}
 
 	public short getDirection() {
