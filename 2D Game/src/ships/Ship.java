@@ -9,6 +9,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
@@ -36,8 +37,7 @@ public abstract class Ship {
 	protected Image[][] hullList;
 	protected ShipPart[][] ship;
 	protected boolean changed = true;
-	protected boolean debug = true;
-//	protected ArrayList<Vector2f[]> pts = new ArrayList<Vector2f[]>();
+	protected boolean debug = false;
 	protected ArrayList<ShipPartPoint> firingThrusters = new ArrayList<ShipPartPoint>();
 	
 	protected Hull hull;
@@ -153,6 +153,16 @@ public abstract class Ship {
 
 	}
 	
+	public boolean takeDamageLine(Ship sourceShip, Line line){
+		if(this.getSimpleClippingHull().intersects(line) && this.getClippingHull().intersects(line)){
+			System.out.println("Laser hit");
+			return true;
+		}else{
+			System.out.println("Laser miss");
+			return false;
+		}
+	}
+	
 	protected double rAngle(){
 		return angle * (Math.PI / (double)180);
 	}
@@ -203,5 +213,8 @@ public abstract class Ship {
 	}
 	public void setRenderPriority(int newPriority) {
 		priority = newPriority;
+	}
+	public double getAngle(){
+		return angle;
 	}
 }

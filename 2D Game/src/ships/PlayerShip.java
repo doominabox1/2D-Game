@@ -1,12 +1,14 @@
 package ships;
 import java.awt.Point;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
@@ -109,22 +111,12 @@ public class PlayerShip extends Ship implements Renderable{
 				curImage.draw(positionOnScreen.x - center.x + p.x, positionOnScreen.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
-		System.out.println(position);
 		
-//		if(debug){
-//			g.setColor(Color.blue);
-//			g.setLineWidth(3);
-//			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(positionOnScreen.x, positionOnScreen.y)));
-//			g.resetLineWidth();
-//			
-//			g.setColor(Color.green);
-//			if(pts != null){
-//				for (Vector2f[] vs : pts) {
-//					g.drawOval(positionOnScreen.x + vs[0].x, positionOnScreen.y + vs[0].y, 2, 2);
-//					vs[1].scale(8000);
-//					g.drawLine(positionOnScreen.x + vs[0].x, positionOnScreen.y + vs[0].y, positionOnScreen.x + vs[0].x + vs[1].x, positionOnScreen.y + vs[0].y + vs[1].y);
-//				}
-//			}
-//		}
+		if(debug){
+			g.setColor(Color.blue);
+			g.setLineWidth(3);
+			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(positionOnScreen.x, positionOnScreen.y)));
+			g.resetLineWidth();
+		}
 	}
 }

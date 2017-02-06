@@ -9,7 +9,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import ships.AIShip;
@@ -119,7 +121,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 //			renderList.addOrdered(aiShip[i]);
 //		}
 		
-		aiShip[0] = AIShip.getRandomAIShip(10, 10, "res/tilesets/mc.png", 32);
+		aiShip[0] = AIShip.getRandomAIShip(7, 5, "res/tilesets/mc.png", 32);
 		
 		aiShip[0].initFunctions();
 		aiShip[0].setPosition(200, 200);
@@ -128,23 +130,39 @@ public class GameWindow extends BasicGame  implements InputListener{
 		renderList.addOrdered(bg);
 		renderList.addOrdered(playerShip);
 	}
-	
+	Line l = new Line(0,0);
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		input.poll(gc.getWidth(), gc.getHeight());
 		playerShip.update(delta, input);
 		for (AIShip ais : aiShip) {
-			ais.setTarget(playerShip.getPosition().add(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2)), playerShip.getVelocity());
+			
+			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
+			dir.scale(500);
+			dir.add(playerShip.getPosition());
+			l = new Line(playerShip.getPosition(), dir);
+			
+			if(input.isKeyDown(Input.KEY_W)){
+				ais.takeDamageLine(playerShip, l);
+			}
+			
+			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
 			ais.update(delta, input);
 		}
-		camera.setLocation(playerShip.getPosition());
+		Vector2f cameraPosition = playerShip.getPosition().sub(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2));
+		camera.setLocation(cameraPosition);
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
+		
+		//g.translate(-camera.getCenterX(), -camera.getCenterY());
 		for( Renderable r : renderList){
 			r.render(gc, g, camera);
 		}
+		Line l2 = new Line(l.getStart(), l.getEnd());
+		l2 = (Line) l2.transform(Transform.createTranslateTransform(-l.getStart().x + (camera.getWidth() / 2), -l.getStart().y + (camera.getHeight() / 2)));
+		g.draw(l2);
 	}
 	
 	@Override

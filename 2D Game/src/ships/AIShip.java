@@ -10,6 +10,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
@@ -172,11 +173,6 @@ public class AIShip  extends Ship implements Renderable{
 	
 	@Override
 	public void update(int delta, Input input){
-		
-//		if(input.isKeyDown(Input.KEY_SPACE)){
-//			position.set(500, 500);
-//			velocity.set(0,0);
-//		}
 
 		Vector2f temp = new Vector2f(velocity);	// Update position using velocity and delta
 		temp.scale(delta);
@@ -230,14 +226,14 @@ public class AIShip  extends Ship implements Renderable{
             accelerateCounterClockwise(Math.abs(anglePIDOutput));
         }
 
-        if(distanceToTarget > targetRange * targetRange){
+        if(distanceToTarget > targetRange * targetRange){ // TODO Fix thrusting before fully turned
 	        if(angleDifference < Math.abs(10)){
 	    		accelerateForward(1);
 	        }
         }else{
         	if(angleDifference < Math.abs(25)){
         		if(velocity.length() > 0.005){
-        			accelerateBackward(1.5);
+        			accelerateBackward(1.0); // TODO fix stopping in stop range
         		}
 	        }
         }
@@ -285,19 +281,10 @@ public class AIShip  extends Ship implements Renderable{
 			}
 		}
 		if(debug){
-//			g.setColor(Color.blue);
-//			g.setLineWidth(3);
-//			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(drawPosition.x, drawPosition.y)));
-//			g.resetLineWidth();
-			
-//			g.setColor(Color.green);
-//			if(pts != null){
-//				for (Vector2f[] vs : pts) {
-//					g.drawOval(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, 2, 2);
-//					vs[1].scale(8000);
-//					g.drawLine(drawPosition.x + vs[0].x, drawPosition.y + vs[0].y, drawPosition.x + vs[0].x + vs[1].x, drawPosition.y + vs[0].y + vs[1].y);
-//				}
-//			}
+			g.setColor(Color.blue);
+			g.setLineWidth(3);
+			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(drawPosition.x, drawPosition.y)));
+			g.resetLineWidth();
 			
 			g.setColor(Color.blue);
 			Vector2f dbg = new Vector2f(targetAngle);
