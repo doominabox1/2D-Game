@@ -17,7 +17,7 @@ import org.newdawn.slick.geom.Vector2f;
 import ships.AIShip;
 import ships.PlayerShip;
 import ships.ShipPart;
-import util.SpacialHash;
+import util.SpatialHash;
 import util.PriorityArrayList;
 
 public class GameWindow extends BasicGame  implements InputListener{

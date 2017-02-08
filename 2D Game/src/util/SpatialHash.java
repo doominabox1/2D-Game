@@ -8,11 +8,11 @@ import org.newdawn.slick.geom.Line;
 
 import ships.Ship;
 
-public class SpacialHash {
+public class SpatialHash {
 	private int bucketSize;
 	HashMap<Point, ArrayList<Ship>> ships;
 	
-	public SpacialHash(int bucketSize){
+	public SpatialHash(int bucketSize){
 		this.bucketSize = bucketSize;
 		ships = new HashMap<Point, ArrayList<Ship>>();
 	}
