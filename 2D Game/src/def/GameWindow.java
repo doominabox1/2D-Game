@@ -17,6 +17,7 @@ import org.newdawn.slick.geom.Vector2f;
 import ships.AIShip;
 import ships.PlayerShip;
 import ships.ShipPart;
+import util.SpacialHash;
 import util.PriorityArrayList;
 
 public class GameWindow extends BasicGame  implements InputListener{
@@ -143,7 +144,11 @@ public class GameWindow extends BasicGame  implements InputListener{
 			l = new Line(playerShip.getPosition(), dir);
 			
 			if(input.isKeyDown(Input.KEY_W)){
-				ais.takeDamageLine(playerShip, l);
+//				if(SpacialHash.lineHitDetect(playerShip, ais, l)){
+//					System.out.println("Hit");
+//				}else{
+//					System.out.println("Miss");
+//				}
 			}
 			
 			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());

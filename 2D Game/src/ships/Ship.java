@@ -153,16 +153,6 @@ public abstract class Ship {
 
 	}
 	
-	public boolean takeDamageLine(Ship sourceShip, Line line){
-		if(this.getSimpleClippingHull().intersects(line) && this.getClippingHull().intersects(line)){
-			System.out.println("Laser hit");
-			return true;
-		}else{
-			System.out.println("Laser miss");
-			return false;
-		}
-	}
-	
 	protected double rAngle(){
 		return angle * (Math.PI / (double)180);
 	}
