@@ -37,7 +37,7 @@ public abstract class Ship {
 	protected Image[][] hullList;
 	protected ShipPart[][] ship;
 	protected boolean changed = true;
-	protected boolean debug = false;
+	protected boolean debug = true;
 	protected ArrayList<ShipPartPoint> firingThrusters = new ArrayList<ShipPartPoint>();
 	
 	protected Hull hull;
