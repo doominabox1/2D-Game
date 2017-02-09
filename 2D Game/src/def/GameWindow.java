@@ -18,6 +18,7 @@ import ships.AIShip;
 import ships.PlayerShip;
 import ships.ShipPart;
 import util.PriorityArrayList;
+import util.SpatialHash;
 
 public class GameWindow extends BasicGame  implements InputListener{
 	public GameWindow(String gamename){
@@ -28,6 +29,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 	AIShip[] aiShip;
 	Rectangle camera;
 	PriorityArrayList renderList = new PriorityArrayList();
+	SpatialHash sh = new SpatialHash(500);
 	
 	@Override
 	public void init(GameContainer gc) throws SlickException {
@@ -134,7 +136,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		input.poll(gc.getWidth(), gc.getHeight());
-		playerShip.update(delta, input);
+		playerShip.update(delta, input, sh);
 		for (AIShip ais : aiShip) {
 			
 			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
@@ -151,7 +153,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 			}
 			
 			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
-			ais.update(delta, input);
+			ais.update(delta, input, sh);
 		}
 		Vector2f cameraPosition = playerShip.getPosition().sub(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2));
 		camera.setLocation(cameraPosition);

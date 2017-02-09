@@ -13,13 +13,14 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
-import def.Renderable;
 import pairobjects.ShipPartPoint;
 import pairobjects.ThrusterCluster;
 import util.MiniPID;
 import util.ShipNotInitializedException;
 import util.SimplexNoise;
+import util.SpatialHash;
 import util.Utility;
+import def.Renderable;
 
 public class AIShip  extends Ship implements Renderable{
 	private boolean initialized = false;
@@ -172,11 +173,13 @@ public class AIShip  extends Ship implements Renderable{
 	}
 	
 	@Override
-	public void update(int delta, Input input){
+	public void update(int delta, Input input, SpatialHash sh){
 
+		sh.remove(this);
 		Vector2f temp = new Vector2f(velocity);	// Update position using velocity and delta
 		temp.scale(delta);
 		position.add(temp);
+		sh.add(this);
 		
 		if(velocity.length() > 0.2){	// Clamp max speed to 0.2
 			velocity.normalise();

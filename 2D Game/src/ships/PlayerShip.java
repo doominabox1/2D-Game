@@ -13,6 +13,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 import def.Renderable;
 import pairobjects.ShipPartPoint;
+import util.SpatialHash;
 import util.Utility;
 
 
@@ -22,12 +23,13 @@ public class PlayerShip extends Ship implements Renderable{
 		priority = Integer.MAX_VALUE;
 	}
 	@Override
-	public void update(int delta, Input input){
+	public void update(int delta, Input input, SpatialHash sh){
 
+		sh.remove(this);
 		Vector2f temp = new Vector2f(velocity);
 		temp.scale(delta);
 		position.add(temp);
-		
+		sh.add(this);
 		
 		angle += angularVelocity * delta;	// Update rotation
 		
@@ -111,7 +113,7 @@ public class PlayerShip extends Ship implements Renderable{
 				curImage.draw(positionOnScreen.x - center.x + p.x, positionOnScreen.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
-		
+		//System.out.println(position);
 		if(debug){
 			g.setColor(Color.blue);
 			g.setLineWidth(3);

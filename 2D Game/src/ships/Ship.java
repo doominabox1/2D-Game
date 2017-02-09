@@ -16,6 +16,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 import pairobjects.ShipPartPoint;
 import util.IllegalBlockLocationException;
+import util.SpatialHash;
 import util.Utility;
 
 
@@ -91,7 +92,7 @@ public abstract class Ship {
 		shipMass = bottom;
 	}
 	
-	public void update(int delta, Input input){
+	public void update(int delta, Input input, SpatialHash sh){
 		
 	}
 	
