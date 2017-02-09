@@ -2,7 +2,7 @@ package pairobjects;
 
 import org.newdawn.slick.geom.Vector2f;
 
-public class ThrusterCluster {
+public class ThrusterCluster {	// Group of thrusters that achieve a certain movement (turning, thrusting, etc)
 	public ShipPartPoint[] thrusters;
 	public double angularVelocity;
 	public Vector2f vector;
