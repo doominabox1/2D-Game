@@ -61,7 +61,7 @@ public class ShipPart {
 			throw new IllegalArgumentException("Power must be between 0 and 1, not " + power);
 		}
 		for(KeyWeight kp : mappedKeys){
-			if(kp.getKey() == key){
+			if(kp.key == key){
 				return false;
 			}
 		}
@@ -72,7 +72,7 @@ public class ShipPart {
 	public void removeKeyMap(int key){
 		Iterator<KeyWeight> iter = mappedKeys.iterator();
 		while (iter.hasNext()) {
-		    if (iter.next().getKey() == key) {
+		    if (iter.next().key == key) {
 		        iter.remove();
 		    }
 		}
@@ -87,10 +87,10 @@ public class ShipPart {
 		Vector2f temp;
 		double totalWeight = 0;
 		for (KeyWeight kp : mappedKeys) {
-			if(input.isKeyDown(kp.getKey())){
+			if(input.isKeyDown(kp.key)){
 				temp = new Vector2f(partDirection);
-				temp.scale((float)(thrust * kp.getWeight()));
-				totalWeight += kp.getWeight();
+				temp.scale((float)(thrust * kp.weight));
+				totalWeight += kp.weight;
 				out.add(temp);
 			}
 		}
