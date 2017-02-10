@@ -93,7 +93,8 @@ public abstract class Ship {
 	}
 	
 	public void update(int delta, Input input, SpatialHash sh){
-		
+		sh.remove(this);
+		sh.add(this);
 	}
 	
 	public void render(GameContainer gc, Graphics g) {
