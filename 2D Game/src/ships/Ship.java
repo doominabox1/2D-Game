@@ -14,13 +14,14 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
+import def.Renderable;
 import pairobjects.ShipPartPoint;
 import util.IllegalBlockLocationException;
 import util.SpatialHash;
 import util.Utility;
 
 
-public abstract class Ship {
+public abstract class Ship implements Renderable{
 	protected Vector2f position; 
 	protected Vector2f velocity;
 	protected Vector2f center;
@@ -58,6 +59,7 @@ public abstract class Ship {
 		center = new Vector2f(0, 0);
 		priority = 0;
 		updateBlocks();
+		
 	}
 
 	protected void updateBlocks(){
@@ -93,8 +95,7 @@ public abstract class Ship {
 	}
 	
 	public void update(int delta, Input input, SpatialHash sh){
-		sh.remove(this);
-		sh.add(this);
+
 	}
 	
 	public void render(GameContainer gc, Graphics g) {

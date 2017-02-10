@@ -1,4 +1,5 @@
 package def;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,11 +13,11 @@ import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import ships.Buoy;
 import ships.PlayerShip;
+import ships.Ship;
 import ships.ShipPart;
 import util.PriorityArrayList;
 import util.SpatialHash;
@@ -39,7 +40,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 	public void init(GameContainer gc) throws SlickException {
 		input = new Input(gc.getHeight());
 		camera = new Rectangle(0, 0, gc.getWidth(), gc.getHeight());
-		buoys = new Buoy[10000];
+		buoys = new Buoy[125000];
 		
 		char[][] s =  {
 				{'n', 'n', 'n', 'n', 'n', 'n', 'n'},
@@ -104,10 +105,9 @@ public class GameWindow extends BasicGame  implements InputListener{
 		
 		Background bg = new Background("res/tilesets/stars.png", playerShip.getPositionObject());
 		
-		for(int i = 0; i < 10000; i++){
+		for(int i = 0; i < buoys.length; i++){
 			buoys[i] = new Buoy(1, 1, "res/tilesets/mc.png", 32);
 			buoys[i].setPosition(Utility.randInt(-10000, 10000, rand), Utility.randInt(-10000, 10000, rand));
-			renderList.add(buoys[i]);
 		}
 		
 		//aiShip = new AIShip[1];
@@ -141,7 +141,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 //		renderList.addOrdered(aiShip[0]);
 		
 		renderList.addOrdered(bg);
-		renderList.addOrdered(playerShip);
+		//renderList.addOrdered(playerShip);
 	}
 	Line l = new Line(0,0);
 	@Override
@@ -175,14 +175,13 @@ public class GameWindow extends BasicGame  implements InputListener{
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-		
-		//g.translate(-camera.getCenterX(), -camera.getCenterY());
 		for( Renderable r : renderList){
 			r.render(gc, g, camera);
 		}
-		Line l2 = new Line(l.getStart(), l.getEnd());
-		l2 = (Line) l2.transform(Transform.createTranslateTransform(-l.getStart().x + (camera.getWidth() / 2), -l.getStart().y + (camera.getHeight() / 2)));
-		g.draw(l2);
+		ArrayList<Ship> shipsToRender = sh.getShipsToRender(camera);
+		for( Ship r : shipsToRender){
+			r.render(gc, g, camera);
+		}
 	}
 	
 	@Override

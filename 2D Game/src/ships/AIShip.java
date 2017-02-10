@@ -256,9 +256,6 @@ public class AIShip  extends Ship implements Renderable{
 		if(positionOnScreen == null){
 			positionOnScreen = new Vector2f(gc.getWidth() / 2, gc.getHeight() / 2);
 		}
-		if(!(camera.contains(getSimpleClippingHull()) || camera.intersects(getSimpleClippingHull()))){
-			return;
-		}
 		Vector2f drawPosition = new Vector2f(position);
 		drawPosition.sub(camera.getLocation());
 		for (int i = 0; i < ship.length; i++) {			// Draw each ship component

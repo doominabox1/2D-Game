@@ -3,10 +3,12 @@ package ships;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+import util.SpatialHash;
 import util.Utility;
 import def.Renderable;
 
@@ -17,15 +19,13 @@ public class Buoy  extends Ship implements Renderable{
 		ShipPart sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.NOTHING, ShipPart.NOTHING);
 		this.setPart(sp, 0, 0);
 		updateBlocks();
+		velocity.set(0.1f, 0);
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g, Rectangle camera) {
 		if(positionOnScreen == null){
 			positionOnScreen = new Vector2f(gc.getWidth() / 2, gc.getHeight() / 2);
-		}
-		if(!(camera.contains(getSimpleClippingHull()) || camera.intersects(getSimpleClippingHull()))){
-			return;
 		}
 		Vector2f drawPosition = new Vector2f(position);
 		drawPosition.sub(camera.getLocation());
@@ -41,5 +41,15 @@ public class Buoy  extends Ship implements Renderable{
 				curImage.draw(drawPosition.x - center.x + p.x, drawPosition.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
+	}
+	
+	@Override
+	public void update(int delta, Input input, SpatialHash sh){
+		Vector2f temp = new Vector2f(velocity);
+		temp.scale(delta);
+		position.add(temp);
+		
+		sh.update(this, velocity);
+		velocity.set(0, 0);
 	}
 }
