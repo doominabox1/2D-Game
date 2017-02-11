@@ -25,11 +25,12 @@ public class PlayerShip extends Ship implements Renderable{
 	@Override
 	public void update(int delta, Input input, SpatialHash sh){
 
-		sh.remove(this);
 		Vector2f temp = new Vector2f(velocity);
 		temp.scale(delta);
+		
 		position.add(temp);
-		sh.add(this);
+		
+		sh.update(this, temp);
 		
 		angle += angularVelocity * delta;	// Update rotation
 		
@@ -45,7 +46,6 @@ public class PlayerShip extends Ship implements Renderable{
 			angle += 360;
 		}
 		
-//		pts.clear();
 		firingThrusters.clear();
 		for (int i = 0; i < ship.length; i++) { // Thrust 
 			for (int j = 0; j < ship[0].length; j++) {
@@ -77,6 +77,9 @@ public class PlayerShip extends Ship implements Renderable{
 		
 		if(changed){		// Update center of mass and ship physics
 			updateBlocks();
+			if(hull == null){
+				getHull();
+			}
 			hull.update();
 			changed = false;
 		}
@@ -113,7 +116,6 @@ public class PlayerShip extends Ship implements Renderable{
 				curImage.draw(positionOnScreen.x - center.x + p.x, positionOnScreen.y - center.y + p.y, (float) shipSize, (float) shipSize);
 			}
 		}
-		//System.out.println(position);
 		if(debug){
 			g.setColor(Color.blue);
 			g.setLineWidth(3);

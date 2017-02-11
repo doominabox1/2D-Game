@@ -1,4 +1,6 @@
 package def;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,14 +13,15 @@ import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
-import ships.AIShip;
+import ships.Buoy;
 import ships.PlayerShip;
+import ships.Ship;
 import ships.ShipPart;
 import util.PriorityArrayList;
 import util.SpatialHash;
+import util.Utility;
 
 public class GameWindow extends BasicGame  implements InputListener{
 	public GameWindow(String gamename){
@@ -26,15 +29,18 @@ public class GameWindow extends BasicGame  implements InputListener{
 	}
 	Input input;
 	PlayerShip playerShip;
-	AIShip[] aiShip;
+	//AIShip[] aiShip;
+	Buoy[] buoys;
 	Rectangle camera;
 	PriorityArrayList renderList = new PriorityArrayList();
 	SpatialHash sh = new SpatialHash(500);
+	Random rand = new Random();
 	
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		input = new Input(gc.getHeight());
 		camera = new Rectangle(0, 0, gc.getWidth(), gc.getHeight());
+		buoys = new Buoy[10000];
 		
 		char[][] s =  {
 				{'n', 'n', 'n', 'n', 'n', 'n', 'n'},
@@ -99,7 +105,12 @@ public class GameWindow extends BasicGame  implements InputListener{
 		
 		Background bg = new Background("res/tilesets/stars.png", playerShip.getPositionObject());
 		
-		aiShip = new AIShip[1];
+		for(int i = 0; i < buoys.length; i++){
+			buoys[i] = new Buoy(1, 1, "res/tilesets/mc.png", 32);
+			buoys[i].setPosition(Utility.randInt(-5000, 5000, rand), Utility.randInt(-5000, 5000, rand));
+		}
+		
+		//aiShip = new AIShip[1];
 //		for(int i = 0; i < 1; i++){
 //			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
 //			
@@ -123,52 +134,55 @@ public class GameWindow extends BasicGame  implements InputListener{
 //			renderList.addOrdered(aiShip[i]);
 //		}
 		
-		aiShip[0] = AIShip.getRandomAIShip(7, 5, "res/tilesets/mc.png", 32);
-		
-		aiShip[0].initFunctions();
-		aiShip[0].setPosition(200, 200);
-		renderList.addOrdered(aiShip[0]);
+//		aiShip[0] = AIShip.getRandomAIShip(7, 5, "res/tilesets/mc.png", 32);
+//		
+//		aiShip[0].initFunctions();
+//		aiShip[0].setPosition(200, 200);
+//		renderList.addOrdered(aiShip[0]);
 		
 		renderList.addOrdered(bg);
-		renderList.addOrdered(playerShip);
+		//renderList.addOrdered(playerShip);
 	}
 	Line l = new Line(0,0);
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		input.poll(gc.getWidth(), gc.getHeight());
 		playerShip.update(delta, input, sh);
-		for (AIShip ais : aiShip) {
-			
-			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
-			dir.scale(500);
-			dir.add(playerShip.getPosition());
-			l = new Line(playerShip.getPosition(), dir);
-			
-			if(input.isKeyDown(Input.KEY_W)){
-//				if(SpacialHash.lineHitDetect(playerShip, ais, l)){
-//					System.out.println("Hit");
-//				}else{
-//					System.out.println("Miss");
-//				}
-			}
-			
-			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
-			ais.update(delta, input, sh);
+		for (Buoy b : buoys) {
+			b.update(delta, input, sh);
 		}
+//		for (AIShip ais : aiShip) {
+//			
+//			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
+//			dir.scale(500);
+//			dir.add(playerShip.getPosition());
+//			l = new Line(playerShip.getPosition(), dir);
+//			
+//			if(input.isKeyDown(Input.KEY_W)){
+////				if(SpacialHash.lineHitDetect(playerShip, ais, l)){
+////					System.out.println("Hit");
+////				}else{
+////					System.out.println("Miss");
+////				}
+//			}
+//			
+//			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
+//			ais.update(delta, input, sh);
+//		}
 		Vector2f cameraPosition = playerShip.getPosition().sub(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2));
 		camera.setLocation(cameraPosition);
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-		
-		//g.translate(-camera.getCenterX(), -camera.getCenterY());
 		for( Renderable r : renderList){
 			r.render(gc, g, camera);
 		}
-		Line l2 = new Line(l.getStart(), l.getEnd());
-		l2 = (Line) l2.transform(Transform.createTranslateTransform(-l.getStart().x + (camera.getWidth() / 2), -l.getStart().y + (camera.getHeight() / 2)));
-		g.draw(l2);
+		ArrayList<Ship> shipsToRender = sh.getShipsToRender(camera);
+		System.out.println(shipsToRender.size());
+		for( Ship r : shipsToRender){
+			r.render(gc, g, camera);
+		}
 	}
 	
 	@Override

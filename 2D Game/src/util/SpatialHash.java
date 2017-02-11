@@ -6,6 +6,9 @@ import java.util.HashMap;
 
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.geom.Transform;
+import org.newdawn.slick.geom.Vector2f;
 
 import ships.Ship;
 
@@ -16,6 +19,24 @@ public class SpatialHash {
 	public SpatialHash(int bucketSize){
 		this.bucketSize = bucketSize;
 		ships = new HashMap<Point, ArrayList<Ship>>();
+	}
+	public void update(Ship ship, Vector2f movement){
+		if(ship.getVelocity().lengthSquared() == 0){
+			return;
+		}
+		
+		Shape clippingHull = ship.getSimpleClippingHull().transform(Transform.createTranslateTransform(-movement.x, -movement.y));
+		Point topLeft = hash(clippingHull.getMinX(), clippingHull.getMinY());
+		Point bottomRight = hash(clippingHull.getMaxX(), clippingHull.getMaxY());
+		for(int x = topLeft.x; x <= bottomRight.x; x++){
+			for(int y = topLeft.y; y <= bottomRight.y; y++){
+				Point key = new Point(x, y);
+				if(ships.containsKey(key)){
+					ships.get(key).remove(ship);
+				}
+			}
+		}
+		add(ship);
 	}
 	public void remove(Ship ship){
 		Rectangle clippingHull = ship.getSimpleClippingHull();
@@ -43,6 +64,20 @@ public class SpatialHash {
 				ships.get(key).add(ship);
 			}
 		}
+	}
+	public ArrayList<Ship> getShipsToRender(Rectangle camera){
+		Point topLeft = hash(camera.getMinX(), camera.getMinY());
+		Point bottomRight = hash(camera.getMaxX(), camera.getMaxY());
+		ArrayList<Ship> renderObjects = new ArrayList<Ship>();
+		for(int x = topLeft.x; x <= bottomRight.x; x++){
+			for(int y = topLeft.y; y <= bottomRight.y; y++){
+				Point key = new Point(x, y);
+				if(ships.containsKey(key)){
+					renderObjects.addAll(ships.get(key));
+				}
+			}
+		}
+		return renderObjects;
 	}
 	private Point hash(Ship ship){
 		return new Point((int) (ship.getX() / bucketSize), (int) (ship.getY() / bucketSize));
