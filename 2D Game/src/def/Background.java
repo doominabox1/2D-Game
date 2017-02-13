@@ -1,5 +1,7 @@
 package def;
 
+import interfaces.Renderable;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -14,7 +16,7 @@ public class Background implements Renderable{
 	public Background(String imagePath, Vector2f position) throws SlickException{
 		this.position = position;
 		image = new Image(imagePath);
-		priority = Integer.MIN_VALUE;
+		priority = -1000000;
 	}
 	@Override
 	public void render(GameContainer gc, Graphics g, Rectangle camera) { // Background image must be in powers of two to wrap properly (2048 seems to work best)

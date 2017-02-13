@@ -1,4 +1,6 @@
 package ships;
+import interfaces.Renderable;
+
 import java.awt.Point;
 
 import org.newdawn.slick.Color;
@@ -11,7 +13,6 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
-import def.Renderable;
 import pairobjects.ShipPartPoint;
 import util.SpatialHash;
 import util.Utility;
@@ -20,17 +21,15 @@ import util.Utility;
 public class PlayerShip extends Ship implements Renderable{
 	public PlayerShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
-		priority = Integer.MAX_VALUE;
+		priority = 1000000;
 	}
 	@Override
 	public void update(int delta, Input input, SpatialHash sh){
 
 		Vector2f temp = new Vector2f(velocity);
 		temp.scale(delta);
-		
 		position.add(temp);
 		
-		sh.update(this, temp);
 		
 		angle += angularVelocity * delta;	// Update rotation
 		

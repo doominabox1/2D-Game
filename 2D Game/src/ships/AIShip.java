@@ -1,5 +1,7 @@
 package ships;
 
+import interfaces.Renderable;
+
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -20,7 +22,6 @@ import util.ShipNotInitializedException;
 import util.SimplexNoise;
 import util.SpatialHash;
 import util.Utility;
-import def.Renderable;
 
 public class AIShip  extends Ship implements Renderable{
 	private boolean initialized = false;
@@ -35,6 +36,8 @@ public class AIShip  extends Ship implements Renderable{
 	private double targetRange;
 	private double targetAngle;
 	MiniPID anglePID;
+	
+	public Color outlineColor = Color.blue;
 
 	public AIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);
@@ -281,7 +284,7 @@ public class AIShip  extends Ship implements Renderable{
 			}
 		}
 		if(debug){
-			g.setColor(Color.blue);
+			g.setColor(outlineColor);
 			g.setLineWidth(3);
 			g.draw(getHull().transform(Transform.createRotateTransform((float) rAngle())).transform(Transform.createTranslateTransform(drawPosition.x, drawPosition.y)));
 			g.resetLineWidth();

@@ -1,4 +1,6 @@
-package ships;
+package unused;
+
+import interfaces.Renderable;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -8,9 +10,10 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+import ships.Ship;
+import ships.ShipPart;
 import util.SpatialHash;
 import util.Utility;
-import def.Renderable;
 
 public class Buoy  extends Ship implements Renderable{
 

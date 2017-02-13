@@ -1,5 +1,7 @@
 package def;
-import java.util.ArrayList;
+import interfaces.Renderable;
+
+import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,11 +17,10 @@ import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
-import ships.Buoy;
+import ships.AIShip;
 import ships.PlayerShip;
-import ships.Ship;
 import ships.ShipPart;
-import util.PriorityArrayList;
+import unused.Buoy;
 import util.SpatialHash;
 import util.Utility;
 
@@ -29,10 +30,8 @@ public class GameWindow extends BasicGame  implements InputListener{
 	}
 	Input input;
 	PlayerShip playerShip;
-	//AIShip[] aiShip;
-	Buoy[] buoys;
+	AIShip[] aiShip;
 	Rectangle camera;
-	PriorityArrayList renderList = new PriorityArrayList();
 	SpatialHash sh = new SpatialHash(500);
 	Random rand = new Random();
 	
@@ -40,7 +39,6 @@ public class GameWindow extends BasicGame  implements InputListener{
 	public void init(GameContainer gc) throws SlickException {
 		input = new Input(gc.getHeight());
 		camera = new Rectangle(0, 0, gc.getWidth(), gc.getHeight());
-		buoys = new Buoy[10000];
 		
 		char[][] s =  {
 				{'n', 'n', 'n', 'n', 'n', 'n', 'n'},
@@ -52,16 +50,6 @@ public class GameWindow extends BasicGame  implements InputListener{
 		
 		playerShip = new PlayerShip(s.length, s[0].length, "res/tilesets/mc.png", 32);
 		ShipPart sp;
-		
-//		playerShip = new PlayerShip(3, 3, "res/tilesets/mc.png", 32);
-//		ShipPart sp;
-//		
-//		sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
-//		sp.addKeyMap(Input.KEY_RIGHT, 1);
-//		playerShip.setPart(sp, 1, 1);
-//		
-//		sp = new ShipPart(ShipPart.TIER2, ShipPart.NOTHING, ShipPart.NOTHING, ShipPart.NOTHING);
-//		playerShip.setPart(sp, 2, 1);
 		
 		
 		for (int i = 0; i < s.length; i++) {
@@ -105,42 +93,33 @@ public class GameWindow extends BasicGame  implements InputListener{
 		
 		Background bg = new Background("res/tilesets/stars.png", playerShip.getPositionObject());
 		
-		for(int i = 0; i < buoys.length; i++){
-			buoys[i] = new Buoy(1, 1, "res/tilesets/mc.png", 32);
-			buoys[i].setPosition(Utility.randInt(-5000, 5000, rand), Utility.randInt(-5000, 5000, rand));
+		
+		aiShip = new AIShip[100];
+		for(int i = 0; i < aiShip.length; i++){
+			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+			aiShip[i].setPart(sp, 1, 0);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
+			aiShip[i].setPart(sp, 1, 2);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.EAST);
+			aiShip[i].setPart(sp, 0, 1);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
+			aiShip[i].setPart(sp, 2, 1);
+			
+			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
+			aiShip[i].setPart(sp, 1, 1);
+			
+			aiShip[i].initFunctions();
+			aiShip[i].setPosition(Utility.randInt(-5000, 5000, rand), Utility.randInt(-5000, 5000, rand));
 		}
 		
-		//aiShip = new AIShip[1];
-//		for(int i = 0; i < 1; i++){
-//			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
-//			aiShip[i].setPart(sp, 1, 0);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.EAST);
-//			aiShip[i].setPart(sp, 1, 2);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.EAST);
-//			aiShip[i].setPart(sp, 0, 1);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.WEST);
-//			aiShip[i].setPart(sp, 2, 1);
-//			
-//			sp = new ShipPart(ShipPart.TIER1, ShipPart.NOTHING, ShipPart.TIER1, ShipPart.NORTH);
-//			aiShip[i].setPart(sp, 1, 1);
-//			
-//			aiShip[i].initFunctions();
-//			aiShip[i].setPosition(i * 200, i * 200);
-//			renderList.addOrdered(aiShip[i]);
-//		}
 		
-//		aiShip[0] = AIShip.getRandomAIShip(7, 5, "res/tilesets/mc.png", 32);
-//		
-//		aiShip[0].initFunctions();
-//		aiShip[0].setPosition(200, 200);
-//		renderList.addOrdered(aiShip[0]);
-		
-		renderList.addOrdered(bg);
+		sh.getAlwaysRenderList().add(bg);
+		sh.getAlwaysRenderList().add(playerShip);
 		//renderList.addOrdered(playerShip);
 	}
 	Line l = new Line(0,0);
@@ -148,40 +127,24 @@ public class GameWindow extends BasicGame  implements InputListener{
 	public void update(GameContainer gc, int delta) throws SlickException {
 		input.poll(gc.getWidth(), gc.getHeight());
 		playerShip.update(delta, input, sh);
-		for (Buoy b : buoys) {
-			b.update(delta, input, sh);
-		}
-//		for (AIShip ais : aiShip) {
-//			
-//			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
-//			dir.scale(500);
-//			dir.add(playerShip.getPosition());
-//			l = new Line(playerShip.getPosition(), dir);
-//			
-//			if(input.isKeyDown(Input.KEY_W)){
-////				if(SpacialHash.lineHitDetect(playerShip, ais, l)){
-////					System.out.println("Hit");
-////				}else{
-////					System.out.println("Miss");
-////				}
-//			}
-//			
-//			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
-//			ais.update(delta, input, sh);
+//		for (AIShip ai : aiShip) {
+//			ai.update(delta, input, sh);
 //		}
+		for (AIShip ais : aiShip) {
+			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
+			ais.update(delta, input, sh);
+		}
 		Vector2f cameraPosition = playerShip.getPosition().sub(new Vector2f(camera.getWidth() / 2, camera.getHeight() / 2));
 		camera.setLocation(cameraPosition);
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-		for( Renderable r : renderList){
-			r.render(gc, g, camera);
-		}
-		ArrayList<Ship> shipsToRender = sh.getShipsToRender(camera);
+
+		PriorityQueue<Renderable> shipsToRender = sh.getShipsToRender(camera);
 		System.out.println(shipsToRender.size());
-		for( Ship r : shipsToRender){
-			r.render(gc, g, camera);
+		while(!shipsToRender.isEmpty()){
+			shipsToRender.poll().render(gc, g, camera);
 		}
 	}
 	
@@ -192,10 +155,20 @@ public class GameWindow extends BasicGame  implements InputListener{
 		} else if(key == Input.KEY_SPACE){
 			playerShip.setPosition(500, 500);
 			playerShip.setVelocity( new Vector2f(0, 0));
-		} else if(key == Input.KEY_N){
-			ShipPart sp = new ShipPart(ShipPart.TIER1, ShipPart.THRUSTER, ShipPart.TIER1, ShipPart.NORTH);
-			sp.addKeyMap(Input.KEY_NUMPAD2, 1);
-			playerShip.setPart(sp, 0, 0);
+		} else if(key == Input.KEY_W){
+			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
+			dir.scale(500);
+			dir.add(playerShip.getPosition());
+			l = new Line(playerShip.getPosition(), dir);
+			// TODO
+//			if(input.isKeyDown(Input.KEY_W)){
+//				if(sh.lineHitDetect(playerShip, ais, l)){
+//					System.out.println("Hit");
+//				}else{
+//					System.out.println("Miss");
+//				}
+//			}
+			
 		}
 	}
 

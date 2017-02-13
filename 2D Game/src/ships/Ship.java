@@ -1,4 +1,6 @@
 package ships;
+import interfaces.Renderable;
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,7 +16,6 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
-import def.Renderable;
 import pairobjects.ShipPartPoint;
 import util.IllegalBlockLocationException;
 import util.SpatialHash;
