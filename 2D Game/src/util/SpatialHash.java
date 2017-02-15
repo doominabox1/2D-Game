@@ -95,92 +95,79 @@ public class SpatialHash {
 		return null;
 	}
 	public ArrayList<Point> getShipsNearLine(Ship ship, Line line){ // Gets a list of all ships that intersect `line` besides `ship` 
-		// TODO https://www.gamedev.net/resources/_/technical/game-programming/spatial-hashing-r2697
-		double x0 = (line.getX1() / bucketSize);
-		double y0 = (line.getY1() / bucketSize);
-		double x1 = (line.getX2() / bucketSize);
-		double y1 = (line.getY2() / bucketSize);
-		boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
-		ArrayList<Point> lst = new ArrayList<Point>();
+	    // TODO https://www.gamedev.net/resources/_/technical/game-programming/spatial-hashing-r2697
+	    double x0 = (line.getX1() / bucketSize);
+	    double y0 = (line.getY1() / bucketSize);
+	    double x1 = (line.getX2() / bucketSize);
+	    double y1 = (line.getY2() / bucketSize);
+	    boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+	    ArrayList<Point> lst = new ArrayList<Point>();
 
-		if (steep){
-			lst.addAll(getShipsNearLine(ship, new Line( (int)(y0 * bucketSize), (int)(x0 * bucketSize), (int)(y1 * bucketSize), (int)(x1 * bucketSize))));
-		}
-		if (x0 > x1){
-			lst.addAll(getShipsNearLine(ship, new Line( (int)(x1 * bucketSize), (int)(y1 * bucketSize), (int)(x0 * bucketSize), (int)(y0 * bucketSize))));
-		}
+	    if (steep){
+	        lst.addAll( getShipsNearLine(ship, new Line( (int)(y0 * bucketSize), (int)(x0 * bucketSize), (int)(y1 * bucketSize), (int)(x1 * bucketSize))));
+	    }
+	    if (x0 > x1){
+	        lst.addAll( getShipsNearLine(ship, new Line( (int)(x1 * bucketSize), (int)(y1 * bucketSize), (int)(x0 * bucketSize), (int)(y0 * bucketSize))));
+	    }
 
-//        drawLine(g, y0, x0, y1, x1);
-//        drawLine(g, x1, y1, x0, y0);
+	    double dx = x1 - x0;
+	    double dy = y1 - y0;
+	    double gradient = dy / dx;
 
-		double dx = x1 - x0;
-		double dy = y1 - y0;
-		double gradient = dy / dx;
+	    // handle first endpoint
+	    double xend = Math.round(x0);
+	    double yend = y0 + gradient * (xend - x0);
+	    double xpxl1 = xend; // this will be used in the main loop
+	    double ypxl1 = ipart(yend);
 
-		// handle first endpoint
-		double xend = Math.round(x0);
-		double yend = y0 + gradient * (xend - x0);
-		double xpxl1 = xend; // this will be used in the main loop
-		double ypxl1 = ipart(yend);
+	    if (steep) {
+	        lst.add(new Point((int)ypxl1, (int)xpxl1));
+	        lst.add(new Point((int)ypxl1 + 1, (int)xpxl1));
+	    } else {
+	        lst.add(new Point((int)xpxl1, (int)ypxl1));
+	        lst.add(new Point((int)xpxl1, (int)ypxl1 + 1));
+	    }
 
-		if (steep) {
-			lst.add(new Point((int)ypxl1, (int)xpxl1));
-			lst.add(new Point((int)ypxl1 + 1, (int)xpxl1));
-//            plot(g, ypxl1, xpxl1, rfpart(yend) * xgap);
-//            plot(g, ypxl1 + 1, xpxl1, fpart(yend) * xgap);
-		} else {
-			lst.add(new Point((int)xpxl1, (int)ypxl1));
-			lst.add(new Point((int)xpxl1, (int)ypxl1 + 1));
-//            plot(g, xpxl1, ypxl1, rfpart(yend) * xgap);
-//            plot(g, xpxl1, ypxl1 + 1, fpart(yend) * xgap);
-		}
+	    // first y-intersection for the main loop
+	    double intery = yend + gradient;
 
-		// first y-intersection for the main loop
-		double intery = yend + gradient;
+	    // handle second endpoint
+	    xend = Math.round(x1);
+	    yend = y1 + gradient * (xend - x1);
+	    double xpxl2 = xend; // this will be used in the main loop
+	    double ypxl2 = ipart(yend);
 
-		// handle second endpoint
-		xend = Math.round(x1);
-		yend = y1 + gradient * (xend - x1);
-		double xpxl2 = xend; // this will be used in the main loop
-		double ypxl2 = ipart(yend);
+	    if (steep) {
+	        lst.add(new Point((int)ypxl2, (int)xpxl2));
+	        lst.add(new Point((int)ypxl2 + 1, (int)xpxl2));
+	    } else {
+	        lst.add(new Point((int)xpxl2, (int)ypxl2));
+	        lst.add(new Point((int)xpxl2, (int)ypxl2 + 1));
+	    }
 
-		if (steep) {
-			lst.add(new Point((int)ypxl2, (int)xpxl2));
-			lst.add(new Point((int)ypxl2 + 1, (int)xpxl2));
-//            plot(g, ypxl2, xpxl2, rfpart(yend) * xgap);
-//            plot(g, ypxl2 + 1, xpxl2, fpart(yend) * xgap);
-		} else {
-			lst.add(new Point((int)xpxl2, (int)ypxl2));
-			lst.add(new Point((int)xpxl2, (int)ypxl2 + 1));
-//            plot(g, xpxl2, ypxl2, rfpart(yend) * xgap);
-//            plot(g, xpxl2, ypxl2 + 1, fpart(yend) * xgap);
-		}
-
-		// main loop
-		for (double x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
-			if (steep) {
-				lst.add(new Point((int)intery, (int)x));
-				lst.add(new Point((int)intery + 1, (int)x));
-//                plot(g, ipart(intery), x, rfpart(intery));
-//                plot(g, ipart(intery) + 1, x, fpart(intery));
-			} else {
-				lst.add(new Point((int)x, (int)intery));
-				lst.add(new Point((int)x, (int)intery + 1));
-//                plot(g, x, ipart(intery), rfpart(intery));
-//                plot(g, x, ipart(intery) + 1, fpart(intery));
-			}
-			intery = intery + gradient;
-		}
-		return lst;
+	    // main loop
+	    for (double x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
+//	    	lst.add(new Point((int)x, (int)intery));
+//            lst.add(new Point((int)x, (int)intery + 1));
+	    	if (steep) {
+	            lst.add(new Point((int)intery, (int)x));
+	            lst.add(new Point((int)intery + 1, (int)x));
+	        } else {
+	            lst.add(new Point((int)x, (int)intery));
+	            lst.add(new Point((int)x, (int)intery + 1));
+	        }
+	        intery = intery + gradient;
+	    }
+	    return lst;
 	}
 	double fpart(double x) {
-		return x - Math.floor(x);
+	    return x - Math.floor(x);
 	}
 	double rfpart(double x) {
-		return 1.0 - fpart(x);
+	    return 1.0 - fpart(x);
 	}
 	int ipart(double x) {
-		return (int) x;
+	    return (int) x;
 	}
 
 	public ArrayList<Renderable> getAlwaysRenderList(){
