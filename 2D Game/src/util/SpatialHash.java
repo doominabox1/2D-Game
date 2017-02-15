@@ -96,18 +96,27 @@ public class SpatialHash {
 	}
 	public ArrayList<Point> getShipsNearLine(Ship ship, Line line){ // Gets a list of all ships that intersect `line` besides `ship` 
 	    // TODO https://www.gamedev.net/resources/_/technical/game-programming/spatial-hashing-r2697
-	    double x0 = (line.getX1() / bucketSize);
-	    double y0 = (line.getY1() / bucketSize);
-	    double x1 = (line.getX2() / bucketSize);
-	    double y1 = (line.getY2() / bucketSize);
-	    boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+	    boolean steep = Math.abs(line.getY2() - line.getY1()) > Math.abs(line.getX2() - line.getX1());
 	    ArrayList<Point> lst = new ArrayList<Point>();
-
+	    double x0, y0, x1, y1;
 	    if (steep){
-	        lst.addAll( getShipsNearLine(ship, new Line( (int)(y0 * bucketSize), (int)(x0 * bucketSize), (int)(y1 * bucketSize), (int)(x1 * bucketSize))));
+	    	x0 = (line.getY1() / bucketSize);
+		    y0 = (line.getX1() / bucketSize);
+		    x1 = (line.getY2() / bucketSize);
+		    y1 = (line.getX2() / bucketSize);
+	    }else{
+	    	x0 = (line.getX1() / bucketSize);
+		    y0 = (line.getY1() / bucketSize);
+		    x1 = (line.getX2() / bucketSize);
+		    y1 = (line.getY2() / bucketSize);
 	    }
 	    if (x0 > x1){
-	        lst.addAll( getShipsNearLine(ship, new Line( (int)(x1 * bucketSize), (int)(y1 * bucketSize), (int)(x0 * bucketSize), (int)(y0 * bucketSize))));
+	    	double tmp = x0;
+	        x0 = x1;
+	        x1 = tmp;
+	        tmp = y0;
+	        y0 = y1;
+	        y1 = tmp;
 	    }
 
 	    double dx = x1 - x0;
@@ -147,8 +156,6 @@ public class SpatialHash {
 
 	    // main loop
 	    for (double x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
-//	    	lst.add(new Point((int)x, (int)intery));
-//            lst.add(new Point((int)x, (int)intery + 1));
 	    	if (steep) {
 	            lst.add(new Point((int)intery, (int)x));
 	            lst.add(new Point((int)intery + 1, (int)x));

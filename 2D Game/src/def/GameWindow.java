@@ -35,7 +35,8 @@ public class GameWindow extends BasicGame  implements InputListener{
 	PlayerShip playerShip;
 	AIShip[] aiShip;
 	Rectangle camera;
-	SpatialHash sh = new SpatialHash(10);
+	int shSize = 100;
+	SpatialHash sh = new SpatialHash(shSize);
 	Random rand = new Random();
 	
 	@Override
@@ -149,11 +150,9 @@ public class GameWindow extends BasicGame  implements InputListener{
 		ArrayList<Point> intersects = sh.getShipsNearLine(null, l);
 		g.setColor(Color.green);
 		for (Point point : intersects) {
-			g.drawRect((point.x * 10) - camera.getX(), (point.y * 10) - camera.getY(), 10, 10);
+			g.drawRect((point.x * shSize) - camera.getX(), (point.y * shSize) - camera.getY(), shSize, shSize);
 		}
 		g.draw(l.transform(Transform.createTranslateTransform((float)-playerShip.getX() + camera.getWidth() / 2, (float)-playerShip.getY() + camera.getHeight() / 2)));
-		g.drawLine(-10000 - camera.getX(), -10000 - camera.getY(), 10000 - camera.getX(), 10000 - camera.getY());
-		g.drawLine(-10000 - camera.getX(), 10000 - camera.getY(), 10000 - camera.getX(), -10000 - camera.getY());
 	}
 	
 	@Override
