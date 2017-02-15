@@ -38,6 +38,8 @@ public class AIShip  extends Ship implements Renderable{
 	MiniPID anglePID;
 	
 	public Color outlineColor = Color.blue;
+	
+	private boolean debug = false;
 
 	public AIShip(int xSize, int ySize, String spriteSheetPath, int spriteSize) throws SlickException {
 		super(xSize, ySize, spriteSheetPath, spriteSize);

@@ -94,9 +94,42 @@ public class SpatialHash {
 		// return destination.getSimpleClippingHull().intersects(line) && destination.getClippingHull().intersects(line);
 		return null;
 	}
-	private ArrayList<Ship> getShipsNearLine(Ship ship, Line line){ // Gets a list of all ships that intersect `line` besides `ship` 
+	public ArrayList<Point> getShipsNearLine(Ship ship, Line line){ // Gets a list of all ships that intersect `line` besides `ship` 
 		// TODO https://www.gamedev.net/resources/_/technical/game-programming/spatial-hashing-r2697
-		return null;
+		int x1 = (int) (line.getX1() / bucketSize);
+		int y1 = (int) (line.getY1() / bucketSize);
+		int x2 = (int) (line.getX2() / bucketSize);
+		int y2 = (int) (line.getY2() / bucketSize);
+		int dx = (int) Math.abs(x2 - x1);
+		int dy = (int) Math.abs(y2 - y1);
+
+		int sx = (x1 < x2) ? 1 : -1;
+		int sy = (y1 < y2) ? 1 : -1;
+
+		int err = dx - dy;
+		
+		ArrayList<Point> lst = new ArrayList<Point>();
+
+		while (true) {
+			lst.add(new Point((int)x1, (int)y1));
+
+		    if (x1 == x2 && y1 == y2) {
+		        break;
+		    }
+
+		    int e2 = 2 * err;
+
+		    if (e2 > -dy) {
+		        err = err - dy;
+		        x1 = x1 + sx;
+		    }
+
+		    if (e2 < dx) {
+		        err = err + dx;
+		        y1 = y1 + sy;
+		    }
+		}
+		return lst;
 	}
 	public ArrayList<Renderable> getAlwaysRenderList(){
 		return alwaysRender;

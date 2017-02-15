@@ -1,6 +1,8 @@
 package def;
 import interfaces.Renderable;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.logging.Level;
@@ -8,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -15,12 +18,12 @@ import org.newdawn.slick.InputListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 
 import ships.AIShip;
 import ships.PlayerShip;
 import ships.ShipPart;
-import unused.Buoy;
 import util.SpatialHash;
 import util.Utility;
 
@@ -32,7 +35,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 	PlayerShip playerShip;
 	AIShip[] aiShip;
 	Rectangle camera;
-	SpatialHash sh = new SpatialHash(500);
+	SpatialHash sh = new SpatialHash(100);
 	Random rand = new Random();
 	
 	@Override
@@ -94,7 +97,7 @@ public class GameWindow extends BasicGame  implements InputListener{
 		Background bg = new Background("res/tilesets/stars.png", playerShip.getPositionObject());
 		
 		
-		aiShip = new AIShip[100];
+		aiShip = new AIShip[1];
 		for(int i = 0; i < aiShip.length; i++){
 			aiShip[i] = new AIShip(3, 3, "res/tilesets/mc.png", 32);
 			
@@ -120,16 +123,12 @@ public class GameWindow extends BasicGame  implements InputListener{
 		
 		sh.getAlwaysRenderList().add(bg);
 		sh.getAlwaysRenderList().add(playerShip);
-		//renderList.addOrdered(playerShip);
 	}
 	Line l = new Line(0,0);
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		input.poll(gc.getWidth(), gc.getHeight());
 		playerShip.update(delta, input, sh);
-//		for (AIShip ai : aiShip) {
-//			ai.update(delta, input, sh);
-//		}
 		for (AIShip ais : aiShip) {
 			ais.setTarget(playerShip.getPosition(), playerShip.getVelocity());
 			ais.update(delta, input, sh);
@@ -140,12 +139,19 @@ public class GameWindow extends BasicGame  implements InputListener{
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-
 		PriorityQueue<Renderable> shipsToRender = sh.getShipsToRender(camera);
-		System.out.println(shipsToRender.size());
 		while(!shipsToRender.isEmpty()){
 			shipsToRender.poll().render(gc, g, camera);
 		}
+		Vector2f v = new Vector2f(playerShip.getAngle() - 90);
+		v.scale(1000);
+		l = new Line((int)playerShip.getX(), (int)playerShip.getY(), (int)(playerShip.getX() + v.x), (int)(playerShip.getY() + v.y));
+		ArrayList<Point> intersects = sh.getShipsNearLine(null, l);
+		g.setColor(Color.green);
+		for (Point point : intersects) {
+			g.drawRect((point.x * 100) - camera.getX(), (point.y * 100) - camera.getY(), 100, 100);
+		}
+		g.draw(l.transform(Transform.createTranslateTransform((float)-playerShip.getX() + camera.getWidth() / 2, (float)-playerShip.getY() + camera.getHeight() / 2)));
 	}
 	
 	@Override
@@ -153,7 +159,6 @@ public class GameWindow extends BasicGame  implements InputListener{
 		if(key == Input.KEY_ESCAPE){
 			System.exit(0);
 		} else if(key == Input.KEY_SPACE){
-			playerShip.setPosition(500, 500);
 			playerShip.setVelocity( new Vector2f(0, 0));
 		} else if(key == Input.KEY_W){
 			Vector2f dir = new Vector2f(playerShip.getAngle() - 90);
